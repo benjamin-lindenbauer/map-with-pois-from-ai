@@ -249,6 +249,7 @@ export default function Home() {
       overflow: 'hidden'
     }}>
       <Head>
+        <title>Points on a Map (generated with AI)</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </Head>
       <Box sx={{ 

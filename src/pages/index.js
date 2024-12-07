@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
 import { Box, Chip, Stack } from '@mui/material';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
@@ -247,6 +248,9 @@ export default function Home() {
       height: '100vh',
       overflow: 'hidden'
     }}>
+      <Head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </Head>
       <Box sx={{ 
         p: 2, 
         backgroundColor: 'background.paper',

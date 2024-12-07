@@ -7,10 +7,11 @@ const SearchTextField = ({
   placeholder, 
   multiline = false, 
   rows = 1,
-  requireCtrl = false 
+  requireCtrl = false,
+  type
 }) => {
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && (!requireCtrl || (requireCtrl && e.ctrlKey))) {
+    if (onEnterPress && e.key === 'Enter' && (!requireCtrl || (requireCtrl && e.ctrlKey))) {
       onEnterPress(value);
     }
   };
@@ -26,6 +27,7 @@ const SearchTextField = ({
       onKeyDown={handleKeyDown}
       multiline={multiline}
       rows={rows}
+      type={type}
       sx={{
         '& .MuiOutlinedInput-root': {
           backgroundColor: 'white',

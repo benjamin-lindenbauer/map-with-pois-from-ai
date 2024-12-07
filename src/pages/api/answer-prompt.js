@@ -1,9 +1,5 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Method not allowed' });
@@ -11,6 +7,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    const { prompt, apiKey } = req.body;
+    
+    const openai = new OpenAI({
+      apiKey: apiKey,
+    });
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -20,15 +22,24 @@ export default async function handler(req, res) {
           Return a list of places that answer the question, one per line.
           Format each line as: 'Name, City, Country'
           Examples:
-          Input: "What is the highest building in Europe?"
+          Input: "Highest building in Europe?"
           Output: "Lakhta Center, Saint Petersburg, Russia"
+
+          Input: "Where is the Eiffel Tower?"
+          Output: "Eiffel Tower, Paris, France"
+
+          Input: "Where was Mozart born?"
+          Output: "Salzburg, Austria"
           
-          Input: "What are the best places to eat in Vienna?"
+          Input: "The best places to eat in Vienna"
           Output: "Steirereck, Vienna, Austria
           Amador, Vienna, Austria
           Silvio Nickol Gourmet Restaurant, Vienna, Austria
           Stiftskeller, Vienna, Austria
           Plachutta, Vienna, Austria"
+
+          Input: "Highest mountain in Germany"
+          Output: "Zugspitze, Germany"
           
           Do not include any other text in your response.
           Do not include numbering or bullet points.
@@ -36,7 +47,7 @@ export default async function handler(req, res) {
         },
         {
           role: "user",
-          content: req.body.prompt
+          content: prompt
         }
       ],
       temperature: 0,

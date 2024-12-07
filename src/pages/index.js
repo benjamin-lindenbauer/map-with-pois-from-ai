@@ -1,15 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Box, Container, Chip, Stack, Button } from '@mui/material';
+import { Box, Chip, Stack } from '@mui/material';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [textInput, setTextInput] = useState('');
   const [promptInput, setPromptInput] = useState('');
+  const [apiKey, setApiKey] = useState('');
   const [markers, setMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
   const [mapInstance, setMapInstance] = useState(null);
+
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('openai_api_key');
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
+
+  const handleApiKeyChange = (key) => {
+    setApiKey(key);
+    localStorage.setItem('openai_api_key', key);
+  };
 
   useEffect(() => {
     if (mapInstance && !placesService) {
@@ -69,7 +81,6 @@ export default function Home() {
               };
               
               setMarkers(prevMarkers => [...prevMarkers, newMarker]);
-              setSearchQuery('');
             }
           });
         } else {
@@ -82,13 +93,15 @@ export default function Home() {
   };
 
   const extractAndSearchPOIs = async (text) => {
+    if (!apiKey) return;
+
     try {
       const response = await fetch('/api/extract-pois', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, apiKey }),
       });
 
       if (!response.ok) {
@@ -130,7 +143,7 @@ export default function Home() {
   };
 
   const handlePrompt = async (prompt) => {
-    if (!prompt || !placesService) return;
+    if (!prompt || !placesService || !apiKey) return;
 
     try {
       const response = await fetch('/api/answer-prompt', {
@@ -138,7 +151,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt, apiKey }),
       });
 
       if (!response.ok) {
@@ -162,13 +175,70 @@ export default function Home() {
     setMarkers(prevMarkers => prevMarkers.filter(marker => marker.id !== markerId));
   };
 
-  const handleRemoveAll = () => {
-    setMarkers([]);
-  };
-
   const handleMapLoad = useCallback((map) => {
     setMapInstance(map);
   }, []);
+
+  const placeColors = {
+    // Nature & Outdoors
+    beach: { bg: '#e3f2fd', text: '#1565c0', hover: '#bbdefb' },
+    park: { bg: '#e8f5e9', text: '#2e7d32', hover: '#c8e6c9' },
+    natural_feature: { bg: '#e8f5e9', text: '#2e7d32', hover: '#c8e6c9' },
+    
+    // Food & Drink
+    restaurant: { bg: '#ffebee', text: '#c62828', hover: '#ffcdd2' },
+    cafe: { bg: '#fff3e0', text: '#e65100', hover: '#ffe0b2' },
+    bar: { bg: '#fff3e0', text: '#e65100', hover: '#ffe0b2' },
+    
+    // Culture & Entertainment
+    museum: { bg: '#f3e5f5', text: '#6a1b9a', hover: '#e1bee7' },
+    art_gallery: { bg: '#f3e5f5', text: '#6a1b9a', hover: '#e1bee7' },
+    tourist_attraction: { bg: '#f3e5f5', text: '#6a1b9a', hover: '#e1bee7' },
+    
+    // Buildings & Structures
+    premise: { bg: '#eeeeee', text: '#424242', hover: '#e0e0e0' },
+    point_of_interest: { bg: '#eeeeee', text: '#424242', hover: '#e0e0e0' },
+    establishment: { bg: '#eeeeee', text: '#424242', hover: '#e0e0e0' },
+    
+    // Shopping
+    store: { bg: '#e1f5fe', text: '#0277bd', hover: '#b3e5fc' },
+    shopping_mall: { bg: '#e1f5fe', text: '#0277bd', hover: '#b3e5fc' },
+    
+    // Default
+    default: { bg: '#f5f5f5', text: '#616161', hover: '#e0e0e0' },
+  };
+
+  const getPlaceColor = (types) => {
+    if (!types || types.length === 0) return placeColors.default;
+    
+    // Check types in order of priority
+    const typeChecks = [
+      'beach',
+      'park',
+      'natural_feature',
+      'restaurant',
+      'cafe',
+      'bar',
+      'museum',
+      'art_gallery',
+      'tourist_attraction',
+      'store',
+      'shopping_mall',
+    ];
+
+    for (const type of typeChecks) {
+      if (types.includes(type)) {
+        return placeColors[type];
+      }
+    }
+
+    // Check for buildings last as they're more generic
+    if (types.some(type => ['premise', 'point_of_interest', 'establishment'].includes(type))) {
+      return placeColors.premise;
+    }
+
+    return placeColors.default;
+  };
 
   return (
     <Box sx={{ 
@@ -179,20 +249,16 @@ export default function Home() {
     }}>
       <Box sx={{ 
         p: 2, 
-        backgroundColor: 'background.paper'
+        backgroundColor: 'background.paper',
+        display: 'flex',
+        gap: 2
       }}>
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{ flex: 1 }}>
           <SearchTextField
             value={promptInput}
             onChange={(e) => setPromptInput(e.target.value)}
             onEnterPress={handlePrompt}
             placeholder="Ask a question (e.g., 'Top 10 places to visit in Berlin') and press Enter"
-          />
-          <SearchTextField
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onEnterPress={handleSearch}
-            placeholder="Search for a point of interest and press Enter"
           />
           <SearchTextField
             value={textInput}
@@ -204,6 +270,51 @@ export default function Home() {
             requireCtrl
           />
         </Stack>
+        <Box sx={{
+          width: 375,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+          border: 1,
+          borderColor: 'divider',
+          p: 2
+        }}>
+          <Stack spacing={1}>
+            <Box sx={{ 
+              fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+              fontSize: '0.875rem', 
+              fontWeight: 500, 
+              color: 'text.secondary', 
+              mb: 1 
+            }}>
+              OpenAI API Key
+            </Box>
+            <SearchTextField
+              value={apiKey}
+              onChange={(e) => handleApiKeyChange(e.target.value)}
+              placeholder="Enter your OpenAI API key"
+              type="password"
+              onEnterPress={undefined}
+            />
+            {!apiKey && (
+              <Box sx={{ 
+                fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                fontSize: '0.75rem', 
+                color: 'warning.main', 
+                mt: 1 
+              }}>
+                Please enter your OpenAI API key to use the AI features
+              </Box>
+            )}
+            <Box sx={{ 
+              fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+              fontSize: '0.75rem', 
+              color: 'info.main', 
+              mt: 1 
+            }}>
+              Note: Your API key will be stored in your browser's local storage.
+            </Box>
+          </Stack>
+        </Box>
       </Box>
       <Box sx={{ 
         display: 'flex',
@@ -222,36 +333,54 @@ export default function Home() {
           />
         </Box>
         <Box sx={{
-          width: 250,
+          width: 280,
           paddingX: 2,
           overflowY: 'auto',
           bgcolor: 'background.paper'
         }}>
-          <Stack spacing={1}>
-            {markers.map((marker) => (
-              <Chip
-                key={marker.id}
-                label={marker.name}
-                onDelete={() => handleDelete(marker.id)}
-                sx={{
-                  borderRadius: '6px',
-                  transition: 'all 0.2s ease-in-out',
-                  '& .MuiChip-label': {
-                    fontSize: '0.875rem',
-                    color: 'text.primary'
-                  },
-                  '& .MuiChip-deleteIcon': {
-                    color: 'text.secondary',
+          <Stack spacing={1.5}>
+            {markers.map((marker, index) => {
+              const color = getPlaceColor(marker.types);
+              return (
+                <Chip
+                  key={marker.id}
+                  label={marker.name}
+                  onDelete={() => handleDelete(marker.id)}
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    padding: '4px 2px',
+                    borderRadius: '6px',
+                    backgroundColor: color.bg,
+                    transition: 'all 0.2s ease-in-out',
+                    '& .MuiChip-label': {
+                      display: 'block',
+                      whiteSpace: 'normal',
+                      fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                      fontSize: '0.815rem',
+                      fontWeight: 500,
+                      color: color.text,
+                      padding: '2px 6px',
+                      textAlign: 'left'
+                    },
+                    '& .MuiChip-deleteIcon': {
+                      color: color.text,
+                      opacity: 0.7,
+                      margin: '2px 6px',
+                      fontSize: '18px',
+                      transition: 'all 0.2s ease-in-out',
+                      '&:hover': {
+                        opacity: 1
+                      }
+                    },
                     '&:hover': {
-                      color: 'error.main'
+                      backgroundColor: color.hover,
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                     }
-                  },
-                  '&:hover': {
-                    bgcolor: 'action.hover'
-                  }
-                }}
-              />
-            ))}
+                  }}
+                />
+              );
+            })}
           </Stack>
         </Box>
       </Box>

@@ -185,65 +185,10 @@ export default function Home() {
     setMapInstance(map);
   }, []);
 
-  const placeColors = {
-    // Nature & Outdoors
-    beach: { bg: '#e3f2fd', text: '#1565c0', hover: '#bbdefb' },
-    park: { bg: '#e8f5e9', text: '#2e7d32', hover: '#c8e6c9' },
-    natural_feature: { bg: '#e8f5e9', text: '#2e7d32', hover: '#c8e6c9' },
-    
-    // Food & Drink
-    restaurant: { bg: '#ffebee', text: '#c62828', hover: '#ffcdd2' },
-    cafe: { bg: '#fff3e0', text: '#e65100', hover: '#ffe0b2' },
-    bar: { bg: '#fff3e0', text: '#e65100', hover: '#ffe0b2' },
-    
-    // Culture & Entertainment
-    museum: { bg: '#f3e5f5', text: '#6a1b9a', hover: '#e1bee7' },
-    art_gallery: { bg: '#f3e5f5', text: '#6a1b9a', hover: '#e1bee7' },
-    tourist_attraction: { bg: '#f3e5f5', text: '#6a1b9a', hover: '#e1bee7' },
-    
-    // Buildings & Structures
-    premise: { bg: '#eeeeee', text: '#424242', hover: '#e0e0e0' },
-    point_of_interest: { bg: '#eeeeee', text: '#424242', hover: '#e0e0e0' },
-    establishment: { bg: '#eeeeee', text: '#424242', hover: '#e0e0e0' },
-    
-    // Shopping
-    store: { bg: '#e1f5fe', text: '#0277bd', hover: '#b3e5fc' },
-    shopping_mall: { bg: '#e1f5fe', text: '#0277bd', hover: '#b3e5fc' },
-    
-    // Default
-    default: { bg: '#f5f5f5', text: '#616161', hover: '#e0e0e0' },
-  };
-
-  const getPlaceColor = (types) => {
-    if (!types || types.length === 0) return placeColors.default;
-    
-    // Check types in order of priority
-    const typeChecks = [
-      'beach',
-      'park',
-      'natural_feature',
-      'restaurant',
-      'cafe',
-      'bar',
-      'museum',
-      'art_gallery',
-      'tourist_attraction',
-      'store',
-      'shopping_mall',
-    ];
-
-    for (const type of typeChecks) {
-      if (types.includes(type)) {
-        return placeColors[type];
-      }
-    }
-
-    // Check for buildings last as they're more generic
-    if (types.some(type => ['premise', 'point_of_interest', 'establishment'].includes(type))) {
-      return placeColors.premise;
-    }
-
-    return placeColors.default;
+  const greyChipStyle = {
+    bg: '#f5f5f5',
+    text: '#616161',
+    hover: '#e0e0e0'
   };
 
   return (
@@ -388,27 +333,25 @@ export default function Home() {
           />
         </Box>
         <Box sx={{
-          width: isMobile ? '100%' : 280,
+          width: isMobile ? '100%' : 300,
           height: isMobile ? '200px' : 'auto',
-          paddingX: isMobile ? 1 : 2,
+          paddingX: 1,
           paddingY: isMobile ? 1 : 0,
           overflowY: 'auto',
           bgcolor: 'background.paper'
         }}>
-          <Stack spacing={1.5}>
+          <Stack direction="row" flexWrap="wrap" gap={1}>
             {markers.map((marker, index) => {
-              const color = getPlaceColor(marker.types);
               return (
                 <Chip
                   key={marker.id}
                   label={marker.name}
                   onDelete={() => handleDelete(marker.id)}
                   sx={{
-                    width: '100%',
                     height: 'auto',
                     padding: '4px 2px',
                     borderRadius: '6px',
-                    backgroundColor: color.bg,
+                    backgroundColor: greyChipStyle.bg,
                     transition: 'all 0.2s ease-in-out',
                     '& .MuiChip-label': {
                       display: 'block',
@@ -416,22 +359,22 @@ export default function Home() {
                       fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
                       fontSize: '0.815rem',
                       fontWeight: 500,
-                      color: color.text,
+                      color: greyChipStyle.text,
                       padding: '2px 6px',
                       textAlign: 'left'
                     },
                     '& .MuiChip-deleteIcon': {
-                      color: color.text,
+                      color: greyChipStyle.text,
                       opacity: 0.7,
-                      margin: '2px 6px',
-                      fontSize: '18px',
+                      margin: '2px 2px',
+                      fontSize: '16px',
                       transition: 'all 0.2s ease-in-out',
                       '&:hover': {
                         opacity: 1
                       }
                     },
                     '&:hover': {
-                      backgroundColor: color.hover,
+                      backgroundColor: greyChipStyle.hover,
                       boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                     }
                   }}

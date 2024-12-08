@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
-import { Box, Chip, Stack } from '@mui/material';
+import { Box, Chip, Stack, useMediaQuery, useTheme, Typography } from '@mui/material';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
 
@@ -11,6 +11,9 @@ export default function Home() {
   const [markers, setMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
   const [mapInstance, setMapInstance] = useState(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem('openai_api_key');
@@ -251,42 +254,46 @@ export default function Home() {
       <Head>
         <title>Points on a Map (generated with AI)</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
+      
       <Box sx={{ 
-        p: 2, 
+        p: isMobile ? 1 : 2, 
         backgroundColor: 'background.paper',
         display: 'flex',
-        gap: 2
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? 1 : 2
       }}>
-        <Stack spacing={2} sx={{ flex: 1 }}>
+        <Stack spacing={isMobile ? 1 : 2} sx={{ flex: 1 }}>
           <SearchTextField
             value={promptInput}
             onChange={(e) => setPromptInput(e.target.value)}
             onEnterPress={handlePrompt}
-            placeholder="Ask a question (e.g., 'Top 10 places to visit in Berlin') and press Enter"
+            placeholder={isMobile ? "Ask a question..." : "Ask a question (e.g., 'Top 10 places to visit in Berlin') and press Enter"}
           />
           <SearchTextField
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
             onEnterPress={extractAndSearchPOIs}
-            placeholder="Enter text to extract and map points of interest and press Ctrl+Enter"
+            placeholder={isMobile ? "Enter text to extract POIs..." : "Enter text to extract and map points of interest and press Ctrl+Enter"}
             multiline
-            rows={3}
+            rows={isMobile ? 2 : 3}
             requireCtrl
           />
         </Stack>
+        
         <Box sx={{
-          width: 375,
+          width: isMobile ? '100%' : 375,
           bgcolor: 'background.paper',
           borderRadius: 1,
           border: 1,
           borderColor: 'divider',
-          p: 2
+          p: isMobile ? 1 : 2
         }}>
           <Stack spacing={1}>
             <Box sx={{ 
               fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-              fontSize: '0.875rem', 
+              fontSize: isMobile ? '0.8rem' : '0.875rem', 
               fontWeight: 500, 
               color: 'text.secondary', 
               mb: 1 
@@ -321,14 +328,16 @@ export default function Home() {
           </Stack>
         </Box>
       </Box>
+
       <Box sx={{ 
         display: 'flex',
         flex: 1,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        flexDirection: isMobile ? 'column' : 'row'
       }}>
         <Box sx={{ 
           flex: 1,
-          height: '100%',
+          height: isMobile ? 'calc(100vh - 300px)' : '100%',
           position: 'relative'
         }}>
           <Map 
@@ -338,8 +347,10 @@ export default function Home() {
           />
         </Box>
         <Box sx={{
-          width: 280,
-          paddingX: 2,
+          width: isMobile ? '100%' : 280,
+          height: isMobile ? '200px' : 'auto',
+          paddingX: isMobile ? 1 : 2,
+          paddingY: isMobile ? 1 : 0,
           overflowY: 'auto',
           bgcolor: 'background.paper'
         }}>

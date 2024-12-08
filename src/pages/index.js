@@ -279,9 +279,12 @@ export default function Home() {
               }
             }}
           >
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{ mb: 1 }}>
               <b>💡 Quick Guide:</b> Enter a natural language prompt to find places. Try something like 
               &quot;The best coffee shops in Vienna&quot;.
+            </Typography>
+            <Typography variant="body2">
+              <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
             </Typography>
           </Box>
           <SearchTextField
@@ -290,22 +293,6 @@ export default function Home() {
             onEnterPress={handlePrompt}
             placeholder="Ask about places..."
           />
-          <Box 
-            sx={{ 
-              backgroundColor: 'info.main',
-              color: 'white',
-              borderRadius: 1,
-              p: 1.5,
-              fontSize: '0.875rem',
-              '& b': {
-                fontWeight: 600,
-              }
-            }}
-          >
-            <Typography variant="body2">
-              <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
-            </Typography>
-          </Box>
           <SearchTextField
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}

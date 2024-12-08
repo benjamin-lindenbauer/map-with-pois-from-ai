@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
-import { Box, Chip, Stack, useMediaQuery, useTheme, Typography } from '@mui/material';
+import { Box, Chip, Stack, useMediaQuery, useTheme, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
 
@@ -11,6 +12,7 @@ export default function Home() {
   const [markers, setMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
   const [mapInstance, setMapInstance] = useState(null);
+  const [apiKeyExpanded, setApiKeyExpanded] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -19,13 +21,18 @@ export default function Home() {
     const savedApiKey = localStorage.getItem('openai_api_key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
+      setApiKeyExpanded(false);
+    } else {
+      setApiKeyExpanded(true);
     }
   }, []);
 
-  const handleApiKeyChange = (key) => {
-    setApiKey(key);
-    localStorage.setItem('openai_api_key', key);
-  };
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('openai_api_key');
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
 
   useEffect(() => {
     if (mapInstance && !placesService) {
@@ -33,6 +40,12 @@ export default function Home() {
       setPlacesService(service);
     }
   }, [mapInstance, placesService]);
+
+  const handleApiKeyChange = (key) => {
+    setApiKey(key);
+    localStorage.setItem('openai_api_key', key);
+    setApiKeyExpanded(false);
+  };
 
   const handleSearch = async (query) => {
     if (!query || !placesService) return;
@@ -96,58 +109,13 @@ export default function Home() {
     }
   };
 
-  const extractAndSearchPOIs = async (text) => {
-    if (!apiKey) return;
-
-    try {
-      const response = await fetch('/api/extract-pois', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text, apiKey }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to extract POIs');
-      }
-
-      const { pois } = await response.json();
-      
-      // Search for each POI sequentially
-      for (const poi of pois) {
-        await new Promise((resolve) => {
-          if (!placesService) return resolve();
-
-          const request = {
-            query: poi,
-            fields: ['name', 'geometry']
-          };
-
-          placesService.findPlaceFromQuery(request, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-              const newMarker = {
-                lat: results[0].geometry.location.lat(),
-                lng: results[0].geometry.location.lng(),
-                name: results[0].name,
-                id: Date.now()
-              };
-              
-              setMarkers(prevMarkers => [...prevMarkers, newMarker]);
-            }
-            resolve();
-          });
-        });
-      }
-
-      setTextInput('');
-    } catch (error) {
-      alert('Error processing text. Please try again.');
-    }
-  };
-
   const handlePrompt = async (prompt) => {
-    if (!prompt || !placesService || !apiKey) return;
+    if (!prompt || !placesService || !apiKey) {
+      if (!apiKey) {
+        alert('Please enter your OpenAI API key first');
+      }
+      return;
+    }
 
     try {
       const response = await fetch('/api/answer-prompt', {
@@ -172,6 +140,40 @@ export default function Home() {
       setPromptInput('');
     } catch (error) {
       alert('Error processing prompt. Please try again.');
+    }
+  };
+
+  const extractAndSearchPOIs = async (text) => {
+    if (!text || !placesService || !apiKey) {
+      if (!apiKey) {
+        alert('Please enter your OpenAI API key first');
+      }
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/extract-pois', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, apiKey }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to extract POIs');
+      }
+
+      const { pois } = await response.json();
+      
+      // Search for each POI sequentially
+      for (const poi of pois) {
+        await handleSearch(poi);
+      }
+
+      setTextInput('');
+    } catch (error) {
+      alert('Error processing text. Please try again.');
     }
   };
 
@@ -265,68 +267,119 @@ export default function Home() {
         gap: isMobile ? 1 : 2
       }}>
         <Stack spacing={isMobile ? 1 : 2} sx={{ flex: 1 }}>
+          <Box 
+            sx={{ 
+              backgroundColor: 'info.main',
+              color: 'white',
+              borderRadius: 1,
+              p: 1.5,
+              fontSize: '0.875rem',
+              '& b': {
+                fontWeight: 600,
+              }
+            }}
+          >
+            <Typography variant="body2">
+              <b>💡 Quick Guide:</b> Enter a natural language prompt to find places. Try something like 
+              &quot;The best coffee shops in Vienna&quot;.
+            </Typography>
+          </Box>
           <SearchTextField
             value={promptInput}
             onChange={(e) => setPromptInput(e.target.value)}
             onEnterPress={handlePrompt}
-            placeholder={isMobile ? "Ask a question..." : "Ask a question (e.g., 'Top 10 places to visit in Berlin') and press Enter"}
+            placeholder="Ask about places..."
           />
+          <Box 
+            sx={{ 
+              backgroundColor: 'info.main',
+              color: 'white',
+              borderRadius: 1,
+              p: 1.5,
+              fontSize: '0.875rem',
+              '& b': {
+                fontWeight: 600,
+              }
+            }}
+          >
+            <Typography variant="body2">
+              <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
+            </Typography>
+          </Box>
           <SearchTextField
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
             onEnterPress={extractAndSearchPOIs}
-            placeholder={isMobile ? "Enter text to extract POIs..." : "Enter text to extract and map points of interest and press Ctrl+Enter"}
+            placeholder="Paste text with locations..."
             multiline
-            rows={isMobile ? 2 : 3}
-            requireCtrl
+            rows={3}
           />
         </Stack>
         
         <Box sx={{
-          width: isMobile ? '100%' : 375,
+          width: isMobile ? '100%' : 400,
           bgcolor: 'background.paper',
           borderRadius: 1,
           border: 1,
           borderColor: 'divider',
-          p: isMobile ? 1 : 2
+          p: 1
         }}>
-          <Stack spacing={1}>
-            <Box sx={{ 
-              fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-              fontSize: isMobile ? '0.8rem' : '0.875rem', 
-              fontWeight: 500, 
-              color: 'text.secondary', 
-              mb: 1 
-            }}>
-              OpenAI API Key
-            </Box>
-            <SearchTextField
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              onEnterPress={handleApiKeyChange}
-              placeholder="Enter OpenAI API Key"
-              type="password"
-              submitIcon="key"
-            />
-            {!apiKey && (
+          <Accordion 
+            expanded={apiKeyExpanded} 
+            onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
+            sx={{
+              backgroundColor: 'transparent',
+              boxShadow: 'none',
+              '&:before': {
+                display: 'none',
+              },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: apiKeyExpanded ? '8px 8px 0 0' : '8px',
+              }}
+            >
+              <Typography variant="body2">
+                {apiKey ? 'OpenAI API Key (saved)' : 'Enter OpenAI API Key'}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: '0 0 8px 8px',
+              }}
+            >
+              <SearchTextField
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                onEnterPress={handleApiKeyChange}
+                placeholder="Enter OpenAI API Key"
+                type="password"
+                submitIcon="key"
+              />
+              {!apiKey && (
+                <Box sx={{ 
+                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                  fontSize: '0.75rem', 
+                  color: 'warning.main', 
+                  mt: 1 
+                }}>
+                  Please enter your OpenAI API key to use the AI features
+                </Box>
+              )}
               <Box sx={{ 
                 fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
                 fontSize: '0.75rem', 
-                color: 'warning.main', 
+                color: 'info.main', 
                 mt: 1 
               }}>
-                Please enter your OpenAI API key to use the AI features
+                Note: Your API key will be stored in your browser's local storage.
               </Box>
-            )}
-            <Box sx={{ 
-              fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-              fontSize: '0.75rem', 
-              color: 'info.main', 
-              mt: 1 
-            }}>
-              Note: Your API key will be stored in your browser's local storage.
-            </Box>
-          </Stack>
+            </AccordionDetails>
+          </Accordion>
         </Box>
       </Box>
 

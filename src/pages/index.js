@@ -302,10 +302,11 @@ export default function Home() {
             </Box>
             <SearchTextField
               value={apiKey}
-              onChange={(e) => handleApiKeyChange(e.target.value)}
-              placeholder="Enter your OpenAI API key"
+              onChange={(e) => setApiKey(e.target.value)}
+              onEnterPress={handleApiKeyChange}
+              placeholder="Enter OpenAI API Key"
               type="password"
-              onEnterPress={undefined}
+              submitIcon="key"
             />
             {!apiKey && (
               <Box sx={{ 

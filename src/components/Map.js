@@ -204,35 +204,37 @@ function Map({ markers, onMapLoad, onRemoveAll }) {
           </InfoWindowF>
         )}
       </GoogleMap>
-      <div style={{ position: 'absolute', top: '10px', right: '60px' }}>
-        <Button
-          variant="contained"
-          onClick={handleShowAll}
-          style={{
-            marginRight: '10px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: '#45a049'
-            }
-          }}
-        >
-          Show All
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleRemoveAll}
-          style={{
-            backgroundColor: '#f44336',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: '#da190b'
-            }
-          }}
-        >
-          Remove All
-        </Button>
-      </div>
+      {markers.length > 0 && (
+        <div style={{ position: 'absolute', top: '10px', right: '60px' }}>
+          <Button
+            variant="contained"
+            onClick={handleShowAll}
+            style={{
+              marginRight: '10px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#45a049'
+              }
+            }}
+          >
+            Show All
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleRemoveAll}
+            style={{
+              backgroundColor: '#f44336',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#da190b'
+              }
+            }}
+          >
+            Remove All
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

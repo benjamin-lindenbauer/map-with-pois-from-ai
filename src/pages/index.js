@@ -349,43 +349,61 @@ export default function Home() {
               </Box>
             </AccordionDetails>
           </Accordion>
-        </Box>
 
         {/* Saved Lists Panel */}
-        <Box sx={{
-          width: isMobile ? '100%' : 400,
-          height: isMobile ? 'auto' : 400,
-          paddingX: 1,
-          paddingY: isMobile ? 1 : 0,
-          overflowY: 'auto',
-          bgcolor: 'background.paper'
-        }}>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Saved Lists ({savedLists.length})</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List>
-                {savedLists.map((list, index) => (
-                  <ListItem
-                    key={index}
-                    secondaryAction={
-                      <IconButton edge="end" onClick={() => handleDeleteList(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemText
-                      primary={list.name}
-                      secondary={`${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
-                      sx={{ cursor: 'pointer' }}
-                      onClick={() => handleLoadList(list)}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </AccordionDetails>
-          </Accordion>
+        <Accordion
+          sx={{
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+            '&:before': {
+              display: 'none',
+            },
+            mt: 1
+          }}
+        >
+          <AccordionSummary 
+            expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
+            sx={{
+              backgroundColor: 'white',
+              borderRadius: '8px 8px 0 0',
+              '&.Mui-expanded': {
+                borderRadius: '8px 8px 0 0'
+              },
+              '&.Mui-disabled': {
+                borderRadius: '8px'
+              }
+            }}
+          >
+            <Typography variant="body2">Saved Lists ({savedLists.length})</Typography>
+          </AccordionSummary>
+          <AccordionDetails
+            sx={{
+              backgroundColor: 'white',
+              borderRadius: '0 0 8px 8px',
+              p: 0
+            }}
+          >
+            <List>
+              {savedLists.map((list, index) => (
+                <ListItem
+                  key={index}
+                  secondaryAction={
+                    <IconButton edge="end" onClick={() => handleDeleteList(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemText
+                    primary={list.name}
+                    secondary={`${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleLoadList(list)}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </AccordionDetails>
+        </Accordion>
         </Box>
       </Box>
 

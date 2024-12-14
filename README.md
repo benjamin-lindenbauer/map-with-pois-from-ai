@@ -4,7 +4,7 @@ This is a Next.js application that displays an interactive map where users can s
 
 ## Features
 - 🗺️ Interactive Google Maps integration
-- 🔍 Search for points of interest with natural language queries
+- 🔍 Search for points of interest with natural language queries powered by OpenAI
 - 📍 Display multiple POIs on the map simultaneously
 - 💫 Smooth animations and transitions
 - 📱 Fully responsive design for mobile and desktop
@@ -19,13 +19,14 @@ Before you begin, ensure you have the following installed:
   - Maps JavaScript API
   - Places API
   - Geocoding API
+- An OpenAI API key for natural language processing
 
 ## Setup
 
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd map-with-poi-app
+cd map-with-pois
 ```
 
 2. Install dependencies:
@@ -33,9 +34,10 @@ cd map-with-poi-app
 npm install
 ```
 
-3. Create a `.env.local` file in the root directory and add your Google Maps API key:
+3. Create a `.env.local` file in the root directory and add your API keys:
 ```
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 4. Run the development server:
@@ -48,13 +50,17 @@ npm run dev
 ## Project Structure
 
 ```
-map-with-poi-app/
+map-with-pois/
 ├── src/
 │   ├── components/    # React components
+│   │   ├── Map.js            # Main map component
+│   │   ├── MapWrapper.js     # Map container wrapper
+│   │   └── SearchTextField.js # Search input component
 │   ├── pages/        # Next.js pages
 │   │   ├── api/      # API routes
 │   │   └── index.js  # Main page
-│   └── styles/       # CSS styles
+│   ├── styles/       # CSS styles
+│   └── utils/        # Utility functions
 ├── public/           # Static files
 └── package.json      # Project dependencies
 ```
@@ -63,6 +69,7 @@ map-with-poi-app/
 - **Next.js** - React framework for production
 - **React** - UI library
 - **Google Maps JavaScript API** - Maps and location services
+- **OpenAI API** - Natural language processing for POI queries
 - **Material-UI** - UI component library
 - **Vercel** - Deployment platform (recommended)
 

@@ -235,198 +235,217 @@ export default function Home() {
       height: '100vh',
       overflow: 'hidden'
     }}>
+      <Head>
+        <title>Points on a Map (generated with AI)</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </Head>
+
       <Box sx={{ 
-        p: isMobile ? 1 : 2, 
-        backgroundColor: 'background.paper',
         display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        gap: isMobile ? 1 : 2
+        flex: 1,
+        flexDirection: 'column'
       }}>
-        <Stack spacing={isMobile ? 1 : 2} sx={{ flex: 1 }}>
-          <Box 
-            sx={{ 
-              backgroundColor: 'info.main',
-              color: 'white',
-              borderRadius: 1,
-              p: 1.5,
-              fontSize: '0.875rem',
-              '& b': {
-                fontWeight: 600,
-              }
-            }}
-          >
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              <b>💡 Quick Guide:</b> Enter a natural language prompt to find places. Try something like 
-              &quot;The best coffee shops in Vienna&quot;.
-            </Typography>
-            <Typography variant="body2">
-              <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
-            </Typography>
-          </Box>
-          <SearchTextField
-            value={promptInput}
-            onChange={(e) => setPromptInput(e.target.value)}
-            onEnterPress={handlePrompt}
-            placeholder="Ask about places..."
-          />
-          <SearchTextField
-            value={textInput}
-            onChange={(e) => setTextInput(e.target.value)}
-            onEnterPress={extractAndSearchPOIs}
-            placeholder="Paste text with locations..."
-            multiline
-            rows={3}
-          />
-        </Stack>
-        
-        <Box sx={{
-          width: isMobile ? '100%' : 400,
-          paddingX: 1,
-          paddingY: isMobile ? 1 : 0,
-          overflowY: 'auto',
-          bgcolor: 'background.paper'
+        {/* Top Row */}
+        <Box sx={{ 
+          display: 'flex',
+          height: isMobile ? 'auto' : '40%',
+          minHeight: isMobile ? 'auto' : '250px',
+          flexDirection: isMobile ? 'column' : 'row'
         }}>
-          <Accordion 
-            expanded={apiKeyExpanded} 
-            onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
-            sx={{
-              backgroundColor: 'transparent',
-              boxShadow: 'none',
-              '&:before': {
-                display: 'none',
-              },
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: apiKeyExpanded ? '8px 8px 0 0' : '8px',
+          {/* Top Left: Info Box and Text Fields */}
+          <Box sx={{ 
+            flex: 1,
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          }}>
+            <Box 
+              sx={{ 
+                backgroundColor: 'info.main',
+                color: 'white',
+                borderRadius: 1,
+                p: 1.5,
+                fontSize: '0.875rem',
+                '& b': { fontWeight: 600 }
               }}
             >
-              <Typography variant="body2">
-                {apiKey ? 'OpenAI API Key (saved)' : 'Enter OpenAI API Key'}
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <b>💡 Quick Guide:</b> Enter a natural language prompt to find places. Try something like 
+                &quot;The best coffee shops in Vienna&quot;.
               </Typography>
-            </AccordionSummary>
-            <AccordionDetails
+              <Typography variant="body2">
+                <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
+              </Typography>
+            </Box>
+            <SearchTextField
+              value={promptInput}
+              onChange={(e) => setPromptInput(e.target.value)}
+              onEnterPress={handlePrompt}
+              placeholder="Ask about places..."
+            />
+            <SearchTextField
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              onEnterPress={extractAndSearchPOIs}
+              placeholder="Paste text with locations..."
+              multiline
+              rows={3}
+            />
+          </Box>
+
+          {/* Top Right: API Key and Saved Lists */}
+          <Box sx={{ 
+            width: isMobile ? '100%' : '400px',
+            p: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            maxHeight: isMobile ? 'auto' : '100%',
+            overflow: isMobile ? 'visible' : 'auto'
+          }}>
+            <Accordion 
+              expanded={apiKeyExpanded} 
+              onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
               sx={{
-                backgroundColor: 'white',
-                borderRadius: '0 0 8px 8px',
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+                '&:before': {
+                  display: 'none',
+                },
               }}
             >
-              <SearchTextField
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                onEnterPress={handleApiKeyChange}
-                placeholder="Enter OpenAI API Key"
-                type="password"
-                submitIcon="key"
-              />
-              {!apiKey && (
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: apiKeyExpanded ? '8px 8px 0 0' : '8px',
+                }}
+              >
+                <Typography variant="body2">
+                  OpenAI API Key
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '0 0 8px 8px',
+                }}
+              >
+                <SearchTextField
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  onEnterPress={handleApiKeyChange}
+                  placeholder="Enter OpenAI API Key"
+                  type="password"
+                  submitIcon="key"
+                />
+                {!apiKey && (
+                  <Box sx={{ 
+                    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                    fontSize: '0.75rem', 
+                    color: 'warning.main', 
+                    mt: 1 
+                  }}>
+                    Please enter your OpenAI API key to use the AI features
+                  </Box>
+                )}
                 <Box sx={{ 
                   fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
                   fontSize: '0.75rem', 
-                  color: 'warning.main', 
+                  color: 'info.main', 
                   mt: 1 
                 }}>
-                  Please enter your OpenAI API key to use the AI features
+                  Note: Your API key will be stored in your browser's local storage.
                 </Box>
-              )}
-              <Box sx={{ 
-                fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-                fontSize: '0.75rem', 
-                color: 'info.main', 
-                mt: 1 
-              }}>
-                Note: Your API key will be stored in your browser's local storage.
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+              </AccordionDetails>
+            </Accordion>
 
-        {/* Saved Lists Panel */}
-        <Accordion
-          sx={{
-            backgroundColor: 'transparent',
-            boxShadow: 'none',
-            '&:before': {
-              display: 'none',
-            },
-            mt: 1
-          }}
-        >
-          <AccordionSummary 
-            expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
-            sx={{
-              backgroundColor: 'white',
-              borderRadius: '8px 8px 0 0',
-              '&.Mui-expanded': {
-                borderRadius: '8px 8px 0 0'
-              },
-              '&.Mui-disabled': {
-                borderRadius: '8px'
-              }
-            }}
-          >
-            <Typography variant="body2">Saved Lists ({savedLists.length})</Typography>
-          </AccordionSummary>
-          <AccordionDetails
-            sx={{
-              backgroundColor: 'white',
-              borderRadius: '0 0 8px 8px',
-              p: 0
-            }}
-          >
-            <List>
-              {savedLists.map((list, index) => (
-                <ListItem
-                  key={index}
-                  secondaryAction={
-                    <IconButton edge="end" onClick={() => handleDeleteList(index)}>
-                      <DeleteIcon />
-                    </IconButton>
+            <Accordion
+              sx={{
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+                '&:before': {
+                  display: 'none',
+                },
+              }}
+            >
+              <AccordionSummary 
+                expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '8px 8px 0 0',
+                  '&.Mui-expanded': {
+                    borderRadius: '8px 8px 0 0'
+                  },
+                  '&.Mui-disabled': {
+                    borderRadius: '8px'
                   }
-                >
-                  <ListItemText
-                    primary={list.name}
-                    secondary={`${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
-                    sx={{ cursor: 'pointer' }}
-                    onClick={() => handleLoadList(list)}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </AccordionDetails>
-        </Accordion>
+                }}
+              >
+                <Typography variant="body2">Saved Lists ({savedLists.length})</Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '0 0 8px 8px',
+                  p: 0
+                }}
+              >
+                <List>
+                  {savedLists.map((list, index) => (
+                    <ListItem
+                      key={index}
+                      secondaryAction={
+                        <IconButton edge="end" onClick={() => handleDeleteList(index)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemText
+                        primary={list.name}
+                        secondary={`${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
+                        sx={{ cursor: 'pointer' }}
+                        onClick={() => handleLoadList(list)}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          </Box>
         </Box>
-      </Box>
 
-      <Box sx={{ 
-        display: 'flex',
-        flexGrow: 1,
-        position: 'relative',
-        flexDirection: isMobile ? 'column' : 'row'
-      }}>
+        {/* Bottom Row */}
         <Box sx={{ 
+          display: 'flex',
           flex: 1,
-          position: 'relative'
+          flexDirection: isMobile ? 'column' : 'row'
         }}>
-          <Map 
-            markers={markers} 
-            onMapLoad={handleMapLoad}
-            onRemoveAll={() => setMarkers([])}
-            onSaveList={() => setSaveDialogOpen(true)}
-          />
-        </Box>
-        <Box sx={{
-          width: isMobile ? '100%' : 300,
-          paddingX: 1,
-          paddingY: isMobile ? 1 : 0,
-          overflowY: 'auto',
-          bgcolor: 'background.paper'
-        }}>
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            {markers.map((marker, index) => {
-              return (
+          {/* Bottom Left: Map */}
+          <Box sx={{ 
+            flex: 1,
+            position: 'relative',
+            minHeight: isMobile ? '400px' : 'auto'
+          }}>
+            <Map 
+              markers={markers} 
+              onMapLoad={handleMapLoad}
+              onRemoveAll={() => setMarkers([])}
+              onSaveList={() => setSaveDialogOpen(true)}
+            />
+          </Box>
+
+          {/* Bottom Right: Point Chips */}
+          <Box sx={{
+            width: isMobile ? '100%' : '400px',
+            p: 2,
+            overflowY: 'auto',
+            maxHeight: isMobile ? '300px' : '100%'
+          }}>
+            <Stack direction="row" flexWrap="wrap" gap={1}>
+              {markers.map((marker) => (
                 <Chip
                   key={marker.id}
                   label={marker.name}
@@ -436,36 +455,21 @@ export default function Home() {
                     padding: '4px 2px',
                     borderRadius: '6px',
                     backgroundColor: greyChipStyle.bg,
+                    color: greyChipStyle.text,
                     transition: 'all 0.2s ease-in-out',
                     '& .MuiChip-label': {
                       display: 'block',
                       whiteSpace: 'normal',
-                      fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
-                      fontSize: '0.815rem',
-                      fontWeight: 500,
-                      color: greyChipStyle.text,
-                      padding: '2px 6px',
-                      textAlign: 'left'
-                    },
-                    '& .MuiChip-deleteIcon': {
-                      color: greyChipStyle.text,
-                      opacity: 0.7,
-                      margin: '2px 2px',
-                      fontSize: '16px',
-                      transition: 'all 0.2s ease-in-out',
-                      '&:hover': {
-                        opacity: 1
-                      }
+                      textAlign: 'left',
                     },
                     '&:hover': {
                       backgroundColor: greyChipStyle.hover,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-                    }
+                    },
                   }}
                 />
-              );
-            })}
-          </Stack>
+              ))}
+            </Stack>
+          </Box>
         </Box>
       </Box>
 

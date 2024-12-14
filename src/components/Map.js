@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { GoogleMap, useLoadScript, MarkerF, InfoWindowF } from '@react-google-maps/api';
+import { GoogleMap, MarkerF, InfoWindowF } from '@react-google-maps/api';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 

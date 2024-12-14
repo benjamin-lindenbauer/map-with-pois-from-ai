@@ -232,8 +232,7 @@ export default function Home() {
     <Box sx={{ 
       display: 'flex',
       flexDirection: 'column',
-      height: '100vh',
-      overflow: 'hidden'
+      height: '100vh'
     }}>
       <Head>
         <title>Points on a Map (generated with AI)</title>
@@ -243,19 +242,18 @@ export default function Home() {
 
       <Box sx={{ 
         display: 'flex',
-        flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        height: '100vh'
       }}>
         {/* Top Row */}
         <Box sx={{ 
           display: 'flex',
-          height: isMobile ? 'auto' : '40%',
-          minHeight: isMobile ? 'auto' : '250px',
-          flexDirection: isMobile ? 'column' : 'row'
+          flexDirection: isMobile ? 'column' : 'row',
+          minHeight: isMobile ? 'auto' : '260px'
         }}>
           {/* Top Left: Info Box and Text Fields */}
           <Box sx={{ 
-            flex: 1,
+            flex: isMobile ? 'none' : 1,
             p: 2,
             display: 'flex',
             flexDirection: 'column',
@@ -298,12 +296,12 @@ export default function Home() {
           {/* Top Right: API Key and Saved Lists */}
           <Box sx={{ 
             width: isMobile ? '100%' : '400px',
-            p: 2,
+            p: isMobile ? 0 : 2,
+            pl: 0,
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
-            maxHeight: isMobile ? 'auto' : '100%',
-            overflow: isMobile ? 'visible' : 'auto'
+            ...(isMobile ? {} : { maxHeight: '260px', overflowY: 'auto' })
           }}>
             <Accordion 
               expanded={apiKeyExpanded} 
@@ -420,14 +418,14 @@ export default function Home() {
         {/* Bottom Row */}
         <Box sx={{ 
           display: 'flex',
-          flex: 1,
-          flexDirection: isMobile ? 'column' : 'row'
+          flexDirection: isMobile ? 'column' : 'row',
+          flex: 1
         }}>
           {/* Bottom Left: Map */}
           <Box sx={{ 
-            flex: 1,
             position: 'relative',
-            minHeight: isMobile ? '300px' : 'auto'
+            height: isMobile ? '400px' : '100%',
+            flex: isMobile ? undefined : 1
           }}>
             <Map 
               markers={markers} 
@@ -441,14 +439,9 @@ export default function Home() {
           <Box sx={{
             width: isMobile ? '100%' : '400px',
             p: 2,
-            overflowY: 'auto',
-            maxHeight: isMobile ? '200px' : '100%',
             bgcolor: 'background.paper',
             borderTop: isMobile ? 1 : 0,
-            borderColor: 'divider',
-            border: isMobile ? 1 : 0,
-            borderRadius: isMobile ? 1 : 0,
-            boxShadow: isMobile ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'
+            borderColor: 'divider'
           }}>
             <Typography variant="body2" sx={{ mb: 1 }}>
               Selected Points ({markers.length})

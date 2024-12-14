@@ -230,17 +230,11 @@ export default function Home() {
 
   return (
     <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
+      display: 'flex',
+      flexDirection: 'column',
       height: '100vh',
       overflow: 'hidden'
     }}>
-      <Head>
-        <title>Points on a Map (generated with AI)</title>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      </Head>
-      
       <Box sx={{ 
         p: isMobile ? 1 : 2, 
         backgroundColor: 'background.paper',
@@ -287,7 +281,6 @@ export default function Home() {
         
         <Box sx={{
           width: isMobile ? '100%' : 400,
-          height: isMobile ? 'auto' : 400,
           paddingX: 1,
           paddingY: isMobile ? 1 : 0,
           overflowY: 'auto',
@@ -409,13 +402,12 @@ export default function Home() {
 
       <Box sx={{ 
         display: 'flex',
-        flex: 1,
-        overflow: 'hidden',
+        flexGrow: 1,
+        position: 'relative',
         flexDirection: isMobile ? 'column' : 'row'
       }}>
         <Box sx={{ 
           flex: 1,
-          height: isMobile ? 'calc(100vh - 300px)' : '100%',
           position: 'relative'
         }}>
           <Map 
@@ -427,7 +419,6 @@ export default function Home() {
         </Box>
         <Box sx={{
           width: isMobile ? '100%' : 300,
-          height: isMobile ? '200px' : 'auto',
           paddingX: 1,
           paddingY: isMobile ? 1 : 0,
           overflowY: 'auto',

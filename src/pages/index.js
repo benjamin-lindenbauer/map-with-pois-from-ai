@@ -427,7 +427,7 @@ export default function Home() {
           <Box sx={{ 
             flex: 1,
             position: 'relative',
-            minHeight: isMobile ? '400px' : 'auto'
+            minHeight: isMobile ? '300px' : 'auto'
           }}>
             <Map 
               markers={markers} 
@@ -442,8 +442,17 @@ export default function Home() {
             width: isMobile ? '100%' : '400px',
             p: 2,
             overflowY: 'auto',
-            maxHeight: isMobile ? '300px' : '100%'
+            maxHeight: isMobile ? '200px' : '100%',
+            bgcolor: 'background.paper',
+            borderTop: isMobile ? 1 : 0,
+            borderColor: 'divider',
+            border: isMobile ? 1 : 0,
+            borderRadius: isMobile ? 1 : 0,
+            boxShadow: isMobile ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'
           }}>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Selected Points ({markers.length})
+            </Typography>
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {markers.map((marker) => (
                 <Chip

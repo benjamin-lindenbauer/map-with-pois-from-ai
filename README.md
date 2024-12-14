@@ -6,6 +6,7 @@ This is a Next.js application that displays an interactive map where users can s
 - 🗺️ Interactive Google Maps integration
 - 🔍 Search for points of interest with natural language queries powered by OpenAI
 - 📍 Display multiple POIs on the map simultaneously
+- 💾 Save and load lists of points for later use
 - 💫 Smooth animations and transitions
 - 📱 Fully responsive design for mobile and desktop
 - 🎨 Modern and clean UI with Material-UI components

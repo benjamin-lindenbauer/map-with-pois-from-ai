@@ -422,23 +422,8 @@ export default function Home() {
             markers={markers} 
             onMapLoad={handleMapLoad}
             onRemoveAll={() => setMarkers([])}
+            onSaveList={() => setSaveDialogOpen(true)}
           />
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 1 }}>
-            <Button
-              variant="contained"
-              onClick={() => setSaveDialogOpen(true)}
-              disabled={markers.length === 0}
-              sx={{
-                backgroundColor: greyChipStyle.bg,
-                color: greyChipStyle.text,
-                '&:hover': {
-                  backgroundColor: greyChipStyle.hover,
-                },
-              }}
-            >
-              Save List
-            </Button>
-          </Box>
         </Box>
         <Box sx={{
           width: isMobile ? '100%' : 300,

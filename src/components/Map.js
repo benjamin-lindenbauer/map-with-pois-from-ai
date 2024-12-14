@@ -13,7 +13,7 @@ const defaultCenter = {
   lng: 16.3738
 };
 
-function Map({ markers, onMapLoad, onRemoveAll }) {
+function Map({ markers, onMapLoad, onRemoveAll, onSaveList }) {
   const [map, setMap] = useState(null);
   const [center, setCenter] = useState(defaultCenter);
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -224,6 +224,7 @@ function Map({ markers, onMapLoad, onRemoveAll }) {
             variant="contained"
             onClick={handleRemoveAll}
             style={{
+              marginRight: '10px',
               backgroundColor: '#f44336',
               color: 'white',
               '&:hover': {
@@ -232,6 +233,20 @@ function Map({ markers, onMapLoad, onRemoveAll }) {
             }}
           >
             Remove All
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => onSaveList()}
+            disabled={markers.length === 0}
+            sx={{
+              backgroundColor: '#f5f5f5',
+              color: '#616161',
+              '&:hover': {
+                backgroundColor: '#e0e0e0',
+              },
+            }}
+          >
+            Save List
           </Button>
         </div>
       )}

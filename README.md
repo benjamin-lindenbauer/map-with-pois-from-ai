@@ -14,7 +14,7 @@ This is a Next.js application that displays an interactive map where users can s
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
-- Node.js (version 14.x or higher)
+- Node.js (version 18.17 or higher)
 - npm (comes with Node.js)
 - A Google Maps API key with the following APIs enabled:
   - Maps JavaScript API
@@ -67,12 +67,11 @@ map-with-pois/
 ```
 
 ## Technologies Used
-- **Next.js** - React framework for production
-- **React** - UI library
+- **Next.js 14** - Modern React framework for production
+- **React 18** - UI library
 - **Google Maps JavaScript API** - Maps and location services
-- **OpenAI API** - Natural language processing for POI queries
-- **Material-UI** - UI component library
-- **Vercel** - Deployment platform (recommended)
+- **OpenAI API v4** - Natural language processing for POI queries
+- **Material-UI v5** - UI component library
 
 ## Available Scripts
 

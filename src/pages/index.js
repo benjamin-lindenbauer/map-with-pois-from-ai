@@ -298,9 +298,10 @@ export default function Home() {
             width: isMobile ? '100%' : '400px',
             p: isMobile ? 0 : 2,
             pl: 0,
+            pb: 0,
             display: 'flex',
             flexDirection: 'column',
-            gap: 2,
+            gap: 1,
             ...(isMobile ? {} : { maxHeight: '260px', overflowY: 'auto' })
           }}>
             <Accordion 
@@ -312,10 +313,17 @@ export default function Home() {
                 '&:before': {
                   display: 'none',
                 },
+                '& .MuiAccordionSummary-root': {
+                  minHeight: '40px',
+                  padding: '0 12px',
+                },
+                '& .MuiAccordionSummary-content': {
+                  margin: '8px 0',
+                },
               }}
             >
               <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
+                expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.1rem' }} />}
                 sx={{
                   backgroundColor: 'white',
                   borderRadius: apiKeyExpanded ? '8px 8px 0 0' : '8px',
@@ -329,6 +337,7 @@ export default function Home() {
                 sx={{
                   backgroundColor: 'white',
                   borderRadius: '0 0 8px 8px',
+                  p: '0px 8px',
                 }}
               >
                 <SearchTextField
@@ -361,7 +370,7 @@ export default function Home() {
             </Accordion>
 
             <Box sx={{ 
-              mt: 2,
+              mt: 0,
               ...(isMobile ? {} : { maxHeight: '260px', overflowY: 'auto' })
             }}>
               <Accordion
@@ -371,10 +380,17 @@ export default function Home() {
                   '&:before': {
                     display: 'none',
                   },
+                  '& .MuiAccordionSummary-root': {
+                    minHeight: '40px',
+                    padding: '0 12px',
+                  },
+                  '& .MuiAccordionSummary-content': {
+                    margin: '8px 0',
+                  },
                 }}
               >
                 <AccordionSummary 
-                  expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.2rem' }} />}
+                  expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.1rem' }} />}
                   sx={{
                     backgroundColor: 'white',
                     borderRadius: '8px 8px 0 0',
@@ -392,16 +408,17 @@ export default function Home() {
                   sx={{
                     backgroundColor: 'white',
                     borderRadius: '0 0 8px 8px',
-                    p: 0
+                    p: 0,
                   }}
                 >
-                  <List>
+                  <List dense>
                     {savedLists.map((list, index) => (
                       <ListItem
                         key={index}
+                        dense
                         secondaryAction={
-                          <IconButton edge="end" onClick={() => handleDeleteList(index)}>
-                            <DeleteIcon />
+                          <IconButton edge="end" size="small" onClick={() => handleDeleteList(index)}>
+                            <DeleteIcon sx={{ fontSize: '1.1rem' }} />
                           </IconButton>
                         }
                       >

@@ -315,7 +315,7 @@ export default function Home() {
                 },
                 '& .MuiAccordionSummary-root': {
                   minHeight: '40px',
-                  padding: '0 12px',
+                  padding: '0 16px',
                 },
                 '& .MuiAccordionSummary-content': {
                   margin: '8px 0',
@@ -337,7 +337,7 @@ export default function Home() {
                 sx={{
                   backgroundColor: 'white',
                   borderRadius: '0 0 8px 8px',
-                  p: '0px 8px',
+                  p: '0px 16px',
                 }}
               >
                 <SearchTextField
@@ -382,7 +382,7 @@ export default function Home() {
                   },
                   '& .MuiAccordionSummary-root': {
                     minHeight: '40px',
-                    padding: '0 12px',
+                    padding: '0 16px',
                   },
                   '& .MuiAccordionSummary-content': {
                     margin: '8px 0',

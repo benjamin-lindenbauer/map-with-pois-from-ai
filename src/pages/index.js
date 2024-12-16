@@ -357,7 +357,7 @@ export default function Home() {
                   onEnterPress={handleApiKeyChange}
                   placeholder="Enter OpenAI API Key"
                   type="password"
-                  submitIcon="key"
+                  submitIcon="save"
                 />
                 {!apiKey && (
                   <Box sx={{ 

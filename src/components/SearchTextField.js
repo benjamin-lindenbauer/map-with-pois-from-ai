@@ -1,6 +1,7 @@
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import KeyIcon from '@mui/icons-material/Key';
+import SaveIcon from '@mui/icons-material/Save';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const SearchTextField = ({ 
@@ -34,6 +35,8 @@ const SearchTextField = ({
 
   const getIcon = () => {
     switch (submitIcon) {
+      case 'save':
+        return <SaveIcon />;
       case 'key':
         return <KeyIcon />;
       case 'search':
@@ -88,7 +91,7 @@ const SearchTextField = ({
       />
       <IconButton 
         type="submit" 
-        aria-label={submitIcon === 'key' ? 'submit api key' : 'search'}
+        aria-label={submitIcon === 'key' ? 'submit api key' : submitIcon === 'save' ? 'save' : 'search'}
         sx={{
           backgroundColor: 'white',
           '&:hover': {

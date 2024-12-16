@@ -42,6 +42,9 @@ jspm_packages
 .env.local
 .env.*.local
 
+# local env files
+.env*.local
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json

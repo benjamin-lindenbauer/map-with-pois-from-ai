@@ -62,61 +62,74 @@ export default function Home() {
     if (!query || !placesService) return;
 
     try {
-      // First, find the place with basic fields
-      const searchRequest = {
-        query,
-        fields: ['name', 'geometry', 'place_id']
-      };
+      const locations = query.split('\n').filter(location => location.trim());
+      const notFoundLocations = [];
 
-      placesService.findPlaceFromQuery(searchRequest, (results, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          const place = results[0];
-          
-          // Then, get details for the found place
-          const detailsRequest = {
-            placeId: place.place_id,
-            fields: [
-              'name',
-              'geometry',
-              'formatted_address',
-              'rating',
-              'user_ratings_total',
-              'opening_hours',
-              'photos',
-              'website',
-              'formatted_phone_number',
-              'types'
-            ]
-          };
+      for (const location of locations) {
+        if (!location.trim()) continue;
 
-          placesService.getDetails(detailsRequest, (placeDetails, detailsStatus) => {
-            if (detailsStatus === window.google.maps.places.PlacesServiceStatus.OK) {
-              const newMarker = {
-                lat: placeDetails.geometry.location.lat(),
-                lng: placeDetails.geometry.location.lng(),
-                name: placeDetails.name,
-                id: `${placeDetails.name}_${placeDetails.geometry.location.lat()}_${placeDetails.geometry.location.lng()}_${Date.now()}`,
-                placeId: placeDetails.place_id,
-                details: query,
-                address: placeDetails.formatted_address,
-                rating: placeDetails.rating,
-                totalRatings: placeDetails.user_ratings_total,
-                isOpen: placeDetails.opening_hours?.isOpen?.(),
-                website: placeDetails.website,
-                phone: placeDetails.formatted_phone_number,
-                types: placeDetails.types,
-                photoUrl: placeDetails.photos?.[0]?.getUrl()
-              };
+        const searchRequest = {
+          query: location.trim(),
+          fields: ['place_id', 'geometry', 'name']
+        };
+
+        await new Promise((resolve) => {
+          placesService.findPlaceFromQuery(searchRequest, (results, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+              const place = results[0];
               
-              setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+              const detailsRequest = {
+                placeId: place.place_id,
+                fields: [
+                  'name',
+                  'geometry',
+                  'formatted_address',
+                  'rating',
+                  'user_ratings_total',
+                  'opening_hours',
+                  'photos',
+                  'website',
+                  'formatted_phone_number',
+                  'types'
+                ]
+              };
+
+              placesService.getDetails(detailsRequest, (placeDetails, detailsStatus) => {
+                if (detailsStatus === window.google.maps.places.PlacesServiceStatus.OK) {
+                  const newMarker = {
+                    lat: placeDetails.geometry.location.lat(),
+                    lng: placeDetails.geometry.location.lng(),
+                    name: placeDetails.name,
+                    id: `${placeDetails.name}_${placeDetails.geometry.location.lat()}_${placeDetails.geometry.location.lng()}_${Date.now()}`,
+                    placeId: placeDetails.place_id,
+                    details: location,
+                    address: placeDetails.formatted_address,
+                    rating: placeDetails.rating,
+                    totalRatings: placeDetails.user_ratings_total,
+                    isOpen: placeDetails.opening_hours?.isOpen?.(),
+                    website: placeDetails.website,
+                    phone: placeDetails.formatted_phone_number,
+                    types: placeDetails.types,
+                    photoUrl: placeDetails.photos?.[0]?.getUrl()
+                  };
+                  
+                  setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+                }
+                resolve();
+              });
+            } else {
+              notFoundLocations.push(location.trim());
+              resolve();
             }
           });
-        } else {
-          alert('Location not found. Please try a different search term.');
-        }
-      });
+        });
+      }
+
+      if (notFoundLocations.length > 0) {
+        alert(`The following locations were not found:\n${notFoundLocations.join('\n')}\n\nPlease try different search terms for these locations.`);
+      }
     } catch (error) {
-      alert('Error searching for location. Please try again.');
+      alert('Error searching for locations. Please try again.');
     }
   };
 
@@ -143,7 +156,6 @@ export default function Home() {
 
       const { locations } = await response.json();
       
-      // Process each location sequentially
       for (const location of locations) {
         await handleSearch(location);
       }
@@ -177,7 +189,6 @@ export default function Home() {
 
       const { pois } = await response.json();
       
-      // Search for each POI sequentially
       for (const poi of pois) {
         await handleSearch(poi);
       }

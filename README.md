@@ -35,10 +35,9 @@ cd map-with-pois
 npm install
 ```
 
-3. Create a `.env.local` file in the root directory and add your API keys:
+3. Create a `.env.local` file in the root directory and add your Google Maps API key:
 ```
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 4. Run the development server:

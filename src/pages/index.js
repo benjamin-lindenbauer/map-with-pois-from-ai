@@ -10,6 +10,7 @@ import SearchTextField from '@/components/SearchTextField';
 export default function Home() {
   const [textInput, setTextInput] = useState('');
   const [promptInput, setPromptInput] = useState('');
+  const [placeInput, setPlaceInput] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [markers, setMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
@@ -62,9 +63,9 @@ export default function Home() {
     if (!query || !placesService) return;
 
     try {
+      setListName(''); // Clear list name when searching
       const locations = query.split('\n').filter(location => location.trim());
       const notFoundLocations = [];
-      setListName(''); // Clear list name when searching
 
       for (const location of locations) {
         if (!location.trim()) continue;
@@ -103,7 +104,7 @@ export default function Home() {
                     name: placeDetails.name,
                     id: `${placeDetails.name}_${placeDetails.geometry.location.lat()}_${placeDetails.geometry.location.lng()}_${Date.now()}`,
                     placeId: placeDetails.place_id,
-                    details: location,
+                    details: location.trim(),
                     address: placeDetails.formatted_address,
                     rating: placeDetails.rating,
                     totalRatings: placeDetails.user_ratings_total,
@@ -115,6 +116,7 @@ export default function Home() {
                   };
                   
                   setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+                  setPlaceInput(''); // Clear place input after successful addition
                 }
                 resolve();
               });
@@ -303,6 +305,9 @@ export default function Home() {
               <Typography variant="body2">
                 <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
               </Typography>
+              <Typography variant="body2">
+                <b>🔍 Direct Search:</b> Search for specific places like &quot;Eiffel Tower Paris&quot; to add them to your map.
+              </Typography>
             </Box>
             <SearchTextField
               value={promptInput}
@@ -317,6 +322,12 @@ export default function Home() {
               placeholder="Paste text with locations..."
               multiline
               rows={3}
+            />
+            <SearchTextField
+              value={placeInput}
+              onChange={(e) => setPlaceInput(e.target.value)}
+              onEnterPress={handleSearch}
+              placeholder="Search for a specific place (e.g., Eiffel Tower Paris)"
             />
           </Box>
 

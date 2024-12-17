@@ -4,12 +4,28 @@ This is a Next.js application that displays an interactive map where users can s
 
 ## Features
 - 🗺️ Interactive Google Maps integration
-- 🔍 Search for points of interest with natural language queries powered by OpenAI
+- 🔍 Multiple ways to find places:
+  - Natural language queries powered by OpenAI (e.g., "Best coffee shops in Vienna")
+  - Direct place search (e.g., "Eiffel Tower Paris")
+  - Text extraction to find locations in pasted content
 - 📍 Display multiple POIs on the map simultaneously
 - 💾 Save and load lists of points for later use
 - 💫 Smooth animations and transitions
 - 📱 Fully responsive design for mobile and desktop
 - 🎨 Modern and clean UI with Material-UI components
+
+## How to Use
+
+### Finding Places
+1. **Natural Language Search**: Enter queries like "Best coffee shops in Vienna" to find multiple related places
+2. **Direct Place Search**: Search for specific places by name, e.g., "Eiffel Tower Paris"
+3. **Text Extraction**: Paste any text containing location names, and the app will automatically find and mark them on the map
+
+### Managing Places
+- Save your current set of places as a named list
+- Load previously saved lists
+- Remove individual places or clear all places from the map
+- View detailed information about each place including ratings, opening hours, and contact information
 
 ## Prerequisites
 

@@ -300,22 +300,33 @@ export default function Home() {
                 '& b': { fontWeight: 600 }
               }}
             >
-              <Typography variant="body2">
-                <b>💡 Quick Guide:</b> Enter a natural language prompt to find places. Try something like 
-                &quot;The best coffee shops in Vienna&quot;.
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Add places to your map using any of these methods:
               </Typography>
               <Typography variant="body2">
-                <b>✨ Text Extraction:</b> Paste any text containing locations and we&apos;ll automatically find and mark them on the map.
+                <b>🎯 Click Map:</b> Simply click anywhere on the map to add a marker at that location.
               </Typography>
               <Typography variant="body2">
-                <b>🔍 Direct Search:</b> Search for specific places like &quot;Eiffel Tower Paris&quot; to add them to your map.
+                <b>💡 Smart Search:</b> Use natural language like &quot;hip cafes in Berlin&quot; to discover places.
+              </Typography>
+              <Typography variant="body2">
+                <b>📝 Text Extract:</b> Paste any text with locations to automatically mark them all.
+              </Typography>
+              <Typography variant="body2">
+                <b>🔍 Direct Search:</b> Search specific places like &quot;Eiffel Tower Paris&quot; for precise results.
               </Typography>
             </Box>
+            <SearchTextField
+              value={placeInput}
+              onChange={(e) => setPlaceInput(e.target.value)}
+              onEnterPress={handleSearch}
+              placeholder="Search for a specific place (e.g., Eiffel Tower Paris)"
+            />
             <SearchTextField
               value={promptInput}
               onChange={(e) => setPromptInput(e.target.value)}
               onEnterPress={handlePrompt}
-              placeholder="Ask about places..."
+              placeholder="Ask about places, e.g., &quot;Best coffee shops in Vienna&quot;"
             />
             <SearchTextField
               value={textInput}
@@ -324,12 +335,6 @@ export default function Home() {
               placeholder="Paste text with locations..."
               multiline
               rows={3}
-            />
-            <SearchTextField
-              value={placeInput}
-              onChange={(e) => setPlaceInput(e.target.value)}
-              onEnterPress={handleSearch}
-              placeholder="Search for a specific place (e.g., Eiffel Tower Paris)"
             />
           </Box>
 

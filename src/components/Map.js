@@ -3,6 +3,7 @@ import { GoogleMap, MarkerF, InfoWindowF } from '@react-google-maps/api';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import MapIcon from '@mui/icons-material/Map';
 
 const containerStyle = {
   width: '100%',
@@ -136,33 +137,25 @@ function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker }) {
                   {selectedMarker.isOpen ? '✓ Open now' : '× Closed'}
                 </p>
               )}
-              {selectedMarker.phone && (
-                <p style={{ margin: '0 0 8px 0', fontSize: '14px' }}>
-                  📞 {selectedMarker.phone}
-                </p>
-              )}
               {selectedMarker.website && (
                 <p style={{ margin: '0 0 8px 0', fontSize: '14px' }}>
                   🌐 <a href={selectedMarker.website} target="_blank" rel="noopener noreferrer">Website</a>
                 </p>
               )}
               {selectedMarker.types && selectedMarker.types.length > 0 && (
-                <div style={{ marginTop: '8px' }}>
-                  <p style={{ fontWeight: 'bold' }}>Types:</p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                    {selectedMarker.types.map((type, index) => (
-                      <span key={index} style={{
-                        display: 'inline-block',
-                        background: '#f0f0f0',
-                        padding: '2px 6px',
-                        borderRadius: '12px',
-                        margin: '0 4px 4px 0',
-                        fontSize: '12px'
-                      }}>
-                        {type.replace(/_/g, ' ')}
-                      </span>
-                    ))}
-                  </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                  {selectedMarker.types.map((type, index) => (
+                    <span key={index} style={{
+                      display: 'inline-block',
+                      background: '#f0f0f0',
+                      padding: '2px 6px',
+                      borderRadius: '12px',
+                      margin: '0 4px 4px 0',
+                      fontSize: '12px'
+                    }}>
+                      {type.replace(/_/g, ' ')}
+                    </span>
+                  ))}
                 </div>
               )}
               <div style={{ 
@@ -189,6 +182,20 @@ function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker }) {
                       <ContentCopyIcon style={{ fontSize: 16, color: '#888' }} />
                     </IconButton>
                   </Tooltip>
+                  <Tooltip title="Open in Google Maps">
+                    <IconButton
+                      size="small"
+                      component="a"
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${selectedMarker.name} ${selectedMarker.address || ''}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ padding: 4 }}
+                    >
+                      <MapIcon style={{ fontSize: 16, color: '#888' }} />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title="Remove this place">
                     <IconButton
                       size="small"
@@ -204,18 +211,6 @@ function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker }) {
                     </IconButton>
                   </Tooltip>
                 </div>
-              </div>
-              <div style={{ marginTop: '8px' }}>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                    `${selectedMarker.name} ${selectedMarker.address || ''}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: '#1976d2', textDecoration: 'none' }}
-                >
-                  Open in Google Maps
-                </a>
               </div>
             </div>
           </InfoWindowF>

@@ -19,6 +19,7 @@ export default function Home() {
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [listName, setListName] = useState('');
   const [savedLists, setSavedLists] = useState([]);
+  const [isLoadingList, setIsLoadingList] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -213,6 +214,7 @@ export default function Home() {
   }, []);
 
   const handleLoadList = (list) => {
+    setIsLoadingList(true);
     setMarkers(list.markers);
     setListName(list.name);
   };
@@ -513,6 +515,8 @@ export default function Home() {
               onSaveList={() => setSaveDialogOpen(true)}
               onRemoveMarker={handleDelete}
               setMarkers={setMarkers}
+              isLoadingList={isLoadingList}
+              setIsLoadingList={setIsLoadingList}
             />
           </Box>
 

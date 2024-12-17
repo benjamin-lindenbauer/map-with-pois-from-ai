@@ -15,7 +15,7 @@ const defaultCenter = {
   lng: 16.3738
 };
 
-function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker, setMarkers }) {
+function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker, setMarkers, isLoadingList, setIsLoadingList }) {
   const [map, setMap] = useState(null);
   const [center, setCenter] = useState(defaultCenter);
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -190,6 +190,14 @@ function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker, setM
       };
     }
   }, [map, setMarkers]);
+
+  useEffect(() => {
+    if (isLoadingList) {
+      handleShowAll();
+      // Reset loading flag after showing markers
+      setTimeout(() => setIsLoadingList(false), 100);
+    }
+  }, [isLoadingList]);
 
   const onLoad = useCallback((map) => {
     setMap(map);

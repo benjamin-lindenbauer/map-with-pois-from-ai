@@ -290,7 +290,7 @@ export default function Home() {
           }}>
             <Box 
               sx={{ 
-                backgroundColor: 'info.main',
+                backgroundColor: '#329AB1',
                 color: 'white',
                 borderRadius: 1,
                 p: 1.5,
@@ -298,7 +298,7 @@ export default function Home() {
                 '& b': { fontWeight: 600 }
               }}
             >
-              <Typography variant="body2" sx={{ mb: 1 }}>
+              <Typography variant="body2">
                 <b>💡 Quick Guide:</b> Enter a natural language prompt to find places. Try something like 
                 &quot;The best coffee shops in Vienna&quot;.
               </Typography>
@@ -492,6 +492,7 @@ export default function Home() {
               onMapLoad={handleMapLoad}
               onRemoveAll={() => setMarkers([])}
               onSaveList={() => setSaveDialogOpen(true)}
+              onRemoveMarker={handleDelete}
             />
           </Box>
 

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { GoogleMap, MarkerF, InfoWindowF } from '@react-google-maps/api';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const containerStyle = {
   width: '100%',
@@ -13,7 +14,7 @@ const defaultCenter = {
   lng: 16.3738
 };
 
-function Map({ markers, onMapLoad, onRemoveAll, onSaveList }) {
+function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker }) {
   const [map, setMap] = useState(null);
   const [center, setCenter] = useState(defaultCenter);
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -175,18 +176,34 @@ function Map({ markers, onMapLoad, onRemoveAll, onSaveList }) {
                 fontSize: '12px'
               }}>
                 <span>📌 {selectedMarker.lat.toFixed(6)}, {selectedMarker.lng.toFixed(6)}</span>
-                <Tooltip title="Copy coordinates">
-                  <IconButton
-                    size="small"
-                    onClick={() => {
-                      const coords = `${selectedMarker.lat.toFixed(6)}, ${selectedMarker.lng.toFixed(6)}`;
-                      navigator.clipboard.writeText(coords);
-                    }}
-                    style={{ padding: 4 }}
-                  >
-                    <ContentCopyIcon style={{ fontSize: 16, color: '#888' }} />
-                  </IconButton>
-                </Tooltip>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <Tooltip title="Copy coordinates">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        const coords = `${selectedMarker.lat.toFixed(6)}, ${selectedMarker.lng.toFixed(6)}`;
+                        navigator.clipboard.writeText(coords);
+                      }}
+                      style={{ padding: 4 }}
+                    >
+                      <ContentCopyIcon style={{ fontSize: 16, color: '#888' }} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Remove this place">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        if (onRemoveMarker) {
+                          onRemoveMarker(selectedMarker.id);
+                          setSelectedMarker(null);
+                        }
+                      }}
+                      style={{ padding: 4 }}
+                    >
+                      <DeleteOutlineIcon style={{ fontSize: 16, color: '#888' }} />
+                    </IconButton>
+                  </Tooltip>
+                </div>
               </div>
               <div style={{ marginTop: '8px' }}>
                 <a

@@ -15,7 +15,7 @@ const defaultCenter = {
   lng: 16.3738
 };
 
-function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker }) {
+function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker, setMarkers }) {
   const [map, setMap] = useState(null);
   const [center, setCenter] = useState(defaultCenter);
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -32,36 +32,164 @@ function Map({ markers, onMapLoad, onRemoveAll, onSaveList, onRemoveMarker }) {
         },
         (error) => {
           console.warn("Error getting location:", error);
-          // Keep default center if geolocation fails
         }
       );
     }
   }, []);
 
   useEffect(() => {
-    if (map && markers.length > 0) {
-      const bounds = new window.google.maps.LatLngBounds();
-      
-      markers.forEach(marker => {
-        bounds.extend({ lat: marker.lat, lng: marker.lng });
-      });
-      
-      map.fitBounds(bounds);
-      
-      if (markers.length === 1) {
-        const listener = map.addListener('idle', () => {
-          map.setZoom(13);
-          window.google.maps.event.removeListener(listener);
-        });
-      }
-    }
-  }, [markers, map]);
-
-  useEffect(() => {
     if (selectedMarker && !markers.find(m => m.id === selectedMarker.id)) {
       setSelectedMarker(null);
     }
   }, [markers, selectedMarker]);
+
+  useEffect(() => {
+    if (map) {
+      // Add click listener to map
+      const clickListener = map.addListener('click', (e) => {
+        // Prevent default InfoWindow from showing
+        e.stop();
+        
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        const infoWindow = new window.google.maps.InfoWindow();
+        
+        if (e.placeId) {
+          // If clicked on a place, get detailed place information
+          const placesService = new window.google.maps.places.PlacesService(map);
+          placesService.getDetails({
+            placeId: e.placeId,
+            fields: ['name', 'formatted_address', 'geometry', 'rating', 'user_ratings_total', 'opening_hours', 'website', 'formatted_phone_number', 'types']
+          }, (place, status) => {
+            if (status === 'OK') {
+              const content = document.createElement('div');
+              content.innerHTML = `
+                <div style="max-width: 300px;">
+                  <h3 style="margin: 0 0 8px 0; font-size: 16px;">${place.name}</h3>
+                  ${place.formatted_address ? `
+                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
+                      📍 ${place.formatted_address}
+                    </p>
+                  ` : ''}
+                  <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
+                    📌 ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                  </p>
+                  ${place.rating ? `
+                    <p style="margin: 0 0 8px 0; font-size: 14px;">
+                      ⭐ ${place.rating} (${place.user_ratings_total} reviews)
+                    </p>
+                  ` : ''}
+                  ${place.website ? `
+                    <p style="margin: 0 0 8px 0; font-size: 14px;">
+                      🌐 <a href="${place.website}" target="_blank" rel="noopener noreferrer">Website</a>
+                    </p>
+                  ` : ''}
+                  ${place.types && place.types.length > 0 ? `
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;">
+                      ${place.types.map(type => `
+                        <span style="
+                          display: inline-block;
+                          background: #f0f0f0;
+                          padding: 2px 6px;
+                          border-radius: 12px;
+                          font-size: 12px;
+                        ">${type.replace(/_/g, ' ')}</span>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                  <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                    <button id="addToList" style="
+                      background-color: #1976d2;
+                      color: white;
+                      border: none;
+                      padding: 6px 16px;
+                      border-radius: 4px;
+                      cursor: pointer;
+                      font-size: 13px;
+                    ">Add to List</button>
+                  </div>
+                </div>
+              `;
+
+              // Add click handler to the button
+              content.querySelector('#addToList').addEventListener('click', () => {
+                const newMarker = {
+                  lat,
+                  lng,
+                  name: place.name,
+                  address: place.formatted_address,
+                  id: `location_${Date.now()}`,
+                  placeId: e.placeId,
+                  rating: place.rating,
+                  totalRatings: place.user_ratings_total,
+                  isOpen: place.opening_hours?.isOpen?.(),
+                  website: place.website,
+                  phone: place.formatted_phone_number,
+                  types: place.types
+                };
+                setMarkers(prev => [...prev, newMarker]);
+                infoWindow.close();
+              });
+
+              infoWindow.setContent(content);
+              infoWindow.setPosition({ lat, lng });
+              infoWindow.open(map);
+            }
+          });
+        } else {
+          // If clicked on empty space, use geocoder
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            if (status === 'OK') {
+              const place = results[0];
+              const content = document.createElement('div');
+              content.innerHTML = `
+                <div style="max-width: 300px;">
+                  <h3 style="margin: 0 0 8px 0; font-size: 16px;">${place.formatted_address}</h3>
+                  <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
+                    📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                  </p>
+                  <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                    <button id="addToList" style="
+                      background-color: #1976d2;
+                      color: white;
+                      border: none;
+                      padding: 6px 16px;
+                      border-radius: 4px;
+                      cursor: pointer;
+                      font-size: 13px;
+                    ">Add to List</button>
+                  </div>
+                </div>
+              `;
+
+              // Add click handler to the button
+              content.querySelector('#addToList').addEventListener('click', () => {
+                const newMarker = {
+                  lat,
+                  lng,
+                  name: place.formatted_address,
+                  address: place.formatted_address,
+                  id: `location_${Date.now()}`,
+                  details: `${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                };
+                setMarkers(prev => [...prev, newMarker]);
+                infoWindow.close();
+              });
+
+              infoWindow.setContent(content);
+              infoWindow.setPosition({ lat, lng });
+              infoWindow.open(map);
+            }
+          });
+        }
+      });
+
+      return () => {
+        window.google.maps.event.removeListener(clickListener);
+      };
+    }
+  }, [map, setMarkers]);
 
   const onLoad = useCallback((map) => {
     setMap(map);

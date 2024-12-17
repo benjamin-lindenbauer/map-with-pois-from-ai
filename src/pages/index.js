@@ -409,7 +409,26 @@ export default function Home() {
 
             <Box sx={{ 
               mt: 0,
-              ...(isMobile ? {} : { maxHeight: '260px', overflowY: 'auto' })
+              ...(isMobile ? {} : { 
+                maxHeight: '260px', 
+                overflowY: 'auto',
+                '&::-webkit-scrollbar': {
+                  width: '6px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'transparent',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: '#bbb',
+                  borderRadius: '3px',
+                  '&:hover': {
+                    background: '#999',
+                  },
+                },
+                // Firefox
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#bbb transparent',
+              })
             }}>
               <Accordion
                 sx={{
@@ -493,6 +512,7 @@ export default function Home() {
               onRemoveAll={() => setMarkers([])}
               onSaveList={() => setSaveDialogOpen(true)}
               onRemoveMarker={handleDelete}
+              setMarkers={setMarkers}
             />
           </Box>
 

@@ -64,6 +64,7 @@ export default function Home() {
     try {
       const locations = query.split('\n').filter(location => location.trim());
       const notFoundLocations = [];
+      setListName(''); // Clear list name when searching
 
       for (const location of locations) {
         if (!location.trim()) continue;
@@ -142,6 +143,7 @@ export default function Home() {
     }
 
     try {
+      setListName(''); // Clear list name when using prompt
       const response = await fetch('/api/answer-prompt', {
         method: 'POST',
         headers: {
@@ -175,6 +177,7 @@ export default function Home() {
     }
 
     try {
+      setListName(''); // Clear list name when extracting POIs
       const response = await fetch('/api/extract-pois', {
         method: 'POST',
         headers: {
@@ -207,24 +210,37 @@ export default function Home() {
     setMapInstance(map);
   }, []);
 
+  const handleLoadList = (list) => {
+    setMarkers(list.markers);
+    setListName(list.name);
+  };
+
   const handleSaveList = () => {
     if (!listName.trim()) return;
 
     const newList = {
       name: listName,
       markers: markers,
-      date: new Date().toISOString()
+      date: '2024-12-17T14:37:01+01:00'
     };
 
-    const updatedLists = [...savedLists, newList];
+    let updatedLists;
+    const existingListIndex = savedLists.findIndex(list => list.name === listName);
+    
+    if (existingListIndex !== -1) {
+      // Update existing list
+      updatedLists = savedLists.map((list, index) => 
+        index === existingListIndex ? newList : list
+      );
+    } else {
+      // Create new list
+      updatedLists = [...savedLists, newList];
+    }
+
     localStorage.setItem('savedPointLists', JSON.stringify(updatedLists));
     setSavedLists(updatedLists);
     setListName('');
     setSaveDialogOpen(false);
-  };
-
-  const handleLoadList = (list) => {
-    setMarkers(list.markers);
   };
 
   const handleDeleteList = (indexToDelete) => {
@@ -509,8 +525,16 @@ export default function Home() {
       </Box>
 
       {/* Save Dialog */}
-      <Dialog open={saveDialogOpen} onClose={() => setSaveDialogOpen(false)}>
-        <DialogTitle>Save Current Points List</DialogTitle>
+      <Dialog open={saveDialogOpen} onClose={() => {
+        setSaveDialogOpen(false);
+        setListName('');
+      }}>
+        <DialogTitle>
+          {savedLists.some(list => list.name === listName)
+            ? 'Update Points List' 
+            : 'Save Current Points List'
+          }
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -522,8 +546,18 @@ export default function Home() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSaveDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleSaveList} disabled={!listName.trim()}>Save</Button>
+          <Button onClick={() => {
+            setSaveDialogOpen(false);
+            setListName('');
+          }}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSaveList} 
+            disabled={!listName.trim()}
+          >
+            {savedLists.some(list => list.name === listName) ? 'Update' : 'Save'}
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

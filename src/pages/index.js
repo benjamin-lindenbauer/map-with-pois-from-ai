@@ -341,10 +341,16 @@ export default function Home() {
           flexDirection: 'column',
           height: isMobile ? 'auto' : '100vh',
           overflow: 'hidden',
-          padding: '0 0 0 8px',
+          padding: '8px',
+          gap: 2
         }}>
           {/* API Key Section */}
-          <Box sx={{ p: 1 }}>
+          <Box sx={{ 
+            p: 1,
+            border: '1px solid #e0e0e0',
+            borderRadius: 1,
+            bgcolor: 'white'
+          }}>
             <Accordion 
               expanded={apiKeyExpanded} 
               onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
@@ -412,7 +418,12 @@ export default function Home() {
           </Box>
 
           {/* Saved Lists Section */}
-          <Box sx={{ px: 1 }}>
+          <Box sx={{ 
+            p: 1,
+            border: '1px solid #e0e0e0',
+            borderRadius: 1,
+            bgcolor: 'white'
+          }}>
             <Typography variant="body2" sx={{ mb: 0.5 }}>
               Saved Lists ({savedLists.length})
             </Typography>
@@ -421,6 +432,7 @@ export default function Home() {
               borderRadius: 1,
             }}>
               <List dense sx={{ 
+                pb: 0,
                 maxHeight: isMobile ? 'none' : '150px', 
                 overflowY: 'auto',
                 '&::-webkit-scrollbar': {
@@ -505,12 +517,14 @@ export default function Home() {
           {/* Selected Points Section */}
           <Box sx={{
             p: 1,
-            bgcolor: 'background.paper',
+            border: '1px solid #e0e0e0',
+            borderRadius: 1,
+            bgcolor: 'white',
             flex: 1,
             overflowY: 'auto'
           }}>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Selected Points ({markers.length})
+              Points on the Map ({markers.length})
             </Typography>
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {markers.map((marker) => (
@@ -542,10 +556,14 @@ export default function Home() {
       </Box>
 
       {/* Save Dialog */}
-      <Dialog open={saveDialogOpen} onClose={() => {
-        setSaveDialogOpen(false);
-        setListName('');
-      }}>
+      <Dialog 
+        disableRestoreFocus
+        open={saveDialogOpen} 
+        onClose={() => {
+          setSaveDialogOpen(false);
+          setListName('');
+        }}
+      >
         <DialogTitle>
           {savedLists.some(list => list.name === listName)
             ? 'Update Points List' 
@@ -560,6 +578,14 @@ export default function Home() {
             fullWidth
             value={listName}
             onChange={(e) => setListName(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && listName.trim()) {
+                e.preventDefault();
+                handleSaveList();
+                setSaveDialogOpen(false);
+                setListName('');
+              }
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -570,7 +596,11 @@ export default function Home() {
             Cancel
           </Button>
           <Button 
-            onClick={handleSaveList} 
+            onClick={() => {
+              handleSaveList();
+              setSaveDialogOpen(false);
+              setListName('');
+            }}
             disabled={!listName.trim()}
           >
             {savedLists.some(list => list.name === listName) ? 'Update' : 'Save'}

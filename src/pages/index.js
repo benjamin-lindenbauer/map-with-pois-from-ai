@@ -282,7 +282,7 @@ export default function Home() {
           flex: isMobile ? 'none' : 1,
           display: 'flex',
           flexDirection: 'column',
-          width: isMobile ? '100%' : '50%',
+          width: isMobile ? '100%' : '60%',
           height: isMobile ? 'auto' : '100%'
         }}>
           {/* Info Box */}
@@ -336,7 +336,7 @@ export default function Home() {
 
         {/* Right Column */}
         <Box sx={{ 
-          width: isMobile ? '100%' : '50%',
+          width: isMobile ? '100%' : '40%',
           display: 'flex',
           flexDirection: 'column',
           height: isMobile ? 'auto' : '100vh',
@@ -355,6 +355,7 @@ export default function Home() {
               expanded={apiKeyExpanded} 
               onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
               sx={{
+                margin: '0',
                 backgroundColor: 'transparent',
                 boxShadow: 'none',
                 '&:before': {
@@ -384,7 +385,7 @@ export default function Home() {
                 sx={{
                   backgroundColor: 'white',
                   borderRadius: '0 0 8px 8px',
-                  p: '0px 16px',
+                  p: '0px',
                 }}
               >
                 <SearchTextField
@@ -418,76 +419,78 @@ export default function Home() {
           </Box>
 
           {/* Saved Lists Section */}
-          <Box sx={{ 
-            p: 1,
-            border: '1px solid #e0e0e0',
-            borderRadius: 1,
-            bgcolor: 'white'
-          }}>
+          <Box>
             <Typography variant="body2" sx={{ mb: 0.5 }}>
               Saved Lists ({savedLists.length})
             </Typography>
-            <Box sx={{
-              backgroundColor: 'white',
+            <Box sx={{ 
+              p: 1,
+              border: '1px solid #e0e0e0',
               borderRadius: 1,
+              bgcolor: 'white'
             }}>
-              <List dense sx={{ 
-                pb: 0,
-                maxHeight: isMobile ? 'none' : '150px', 
-                overflowY: 'auto',
-                '&::-webkit-scrollbar': {
-                  width: '6px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  background: 'transparent',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: '#bbb',
-                  borderRadius: '3px',
-                  '&:hover': {
-                    background: '#999',
-                  },
-                },
-                scrollbarWidth: 'thin',
-                scrollbarColor: '#bbb transparent',
+              <Box sx={{
+                backgroundColor: 'white',
+                borderRadius: 1,
               }}>
-                {savedLists.map((list, index) => (
-                  <ListItem
-                    key={index}
-                    dense
-                    sx={{ py: 0.5, px: 0 }}
-                    secondaryAction={
-                      <Box sx={{ display: 'flex', gap: 0.5 }}>
-                        <Tooltip title="Load List" arrow>
-                          <IconButton edge="end" size="small" onClick={() => handleLoadList(list)}>
-                            <UploadFileIcon sx={{ fontSize: '1.1rem' }} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete List" arrow>
-                          <IconButton edge="end" size="small" onClick={() => handleDeleteList(index)}>
-                            <DeleteIcon sx={{ fontSize: '1.1rem' }} />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    }
-                  >
-                    <ListItemText
-                      primary={`${list.name} • ${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
-                      sx={{
-                        '& .MuiListItemText-primary': {
-                          fontSize: '0.875rem'
-                        }
-                      }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
+                <List dense sx={{ 
+                  p: 0,
+                  maxHeight: isMobile ? 'none' : '144px', 
+                  overflowY: 'auto',
+                  '&::-webkit-scrollbar': {
+                    width: '6px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: 'transparent',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#bbb',
+                    borderRadius: '3px',
+                    '&:hover': {
+                      background: '#999',
+                    },
+                  },
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#bbb transparent',
+                }}>
+                  {savedLists.map((list, index) => (
+                    <ListItem
+                      key={index}
+                      dense
+                      sx={{ py: 0.5, px: 0 }}
+                      secondaryAction={
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <Tooltip title="Load List" arrow>
+                            <IconButton edge="end" size="small" onClick={() => handleLoadList(list)}>
+                              <UploadFileIcon sx={{ fontSize: '1.1rem' }} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete List" arrow>
+                            <IconButton edge="end" size="small" onClick={() => handleDeleteList(index)}>
+                              <DeleteIcon sx={{ fontSize: '1.1rem' }} />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      }
+                    >
+                      <ListItemText
+                        primary={`${list.name} • ${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
+                        sx={{
+                          '& .MuiListItemText-primary': {
+                            fontSize: '0.875rem'
+                          }
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </Box>
           </Box>
 
           {/* Search Inputs Section */}
           <Box sx={{ 
-            p: 1,
+            p: 0,
             display: 'flex',
             flexDirection: 'column',
             gap: 1
@@ -515,42 +518,64 @@ export default function Home() {
           </Box>
 
           {/* Selected Points Section */}
-          <Box sx={{
-            p: 1,
-            border: '1px solid #e0e0e0',
-            borderRadius: 1,
-            bgcolor: 'white',
+          <Box sx={{ 
             flex: 1,
-            overflowY: 'auto'
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '200px'
           }}>
-            <Typography variant="body2" sx={{ mb: 1 }}>
+            <Typography variant="body2" sx={{ mb: 0.5 }}>
               Points on the Map ({markers.length})
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
-              {markers.map((marker) => (
-                <Chip
-                  key={marker.id}
-                  label={marker.name}
-                  onDelete={() => handleDelete(marker.id)}
-                  sx={{
-                    height: 'auto',
-                    padding: '4px 2px',
-                    borderRadius: '6px',
-                    backgroundColor: greyChipStyle.bg,
-                    color: greyChipStyle.text,
-                    transition: 'all 0.2s ease-in-out',
-                    '& .MuiChip-label': {
-                      display: 'block',
-                      whiteSpace: 'normal',
-                      textAlign: 'left',
-                    },
-                    '&:hover': {
-                      backgroundColor: greyChipStyle.hover,
-                    },
-                  }}
-                />
-              ))}
-            </Stack>
+            <Box sx={{
+              p: 1,
+              border: '1px solid #e0e0e0',
+              borderRadius: 1,
+              bgcolor: 'white',
+              flex: 1,
+              overflowY: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#bbb',
+                borderRadius: '3px',
+                '&:hover': {
+                  background: '#999',
+                },
+              },
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#bbb transparent',
+            }}>
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                {markers.map((marker) => (
+                  <Chip
+                    key={marker.id}
+                    label={marker.name}
+                    onDelete={() => handleDelete(marker.id)}
+                    sx={{
+                      height: 'auto',
+                      padding: '4px 2px',
+                      borderRadius: '6px',
+                      backgroundColor: greyChipStyle.bg,
+                      color: greyChipStyle.text,
+                      transition: 'all 0.2s ease-in-out',
+                      '& .MuiChip-label': {
+                        display: 'block',
+                        whiteSpace: 'normal',
+                        textAlign: 'left',
+                      },
+                      '&:hover': {
+                        backgroundColor: greyChipStyle.hover,
+                      },
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
           </Box>
         </Box>
       </Box>

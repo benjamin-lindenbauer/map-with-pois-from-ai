@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import { Box, Chip, Stack, useMediaQuery, useTheme, Typography, Accordion, AccordionSummary, AccordionDetails, 
-  Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, IconButton } from '@mui/material';
+  Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, IconButton, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
 
@@ -266,35 +267,30 @@ export default function Home() {
       height: '100vh'
     }}>
       <Head>
-        <title>Points on a Map (generated with AI)</title>
+        <title>Points on Maps</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
 
       <Box sx={{ 
         display: 'flex',
-        flexDirection: 'column',
-        height: '100vh'
+        flexDirection: isMobile ? 'column' : 'row',
+        height: isMobile ? 'auto' : '100vh'
       }}>
-        {/* Top Row */}
+        {/* Left Column */}
         <Box sx={{ 
+          flex: isMobile ? 'none' : 1,
           display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          minHeight: isMobile ? 'auto' : '260px'
+          flexDirection: 'column',
+          width: isMobile ? '100%' : '50%',
+          height: isMobile ? 'auto' : '100%'
         }}>
-          {/* Top Left: Info Box and Text Fields */}
-          <Box sx={{ 
-            flex: isMobile ? 'none' : 1,
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2
-          }}>
+          {/* Info Box */}
+          <Box>
             <Box 
               sx={{ 
                 backgroundColor: '#329AB1',
                 color: 'white',
-                borderRadius: 1,
                 p: 1.5,
                 fontSize: '0.875rem',
                 '& b': { fontWeight: 600 }
@@ -316,39 +312,39 @@ export default function Home() {
                 <b>🔍 Direct Search:</b> Search specific places like &quot;Eiffel Tower Paris&quot; for precise results.
               </Typography>
             </Box>
-            <SearchTextField
-              value={placeInput}
-              onChange={(e) => setPlaceInput(e.target.value)}
-              onEnterPress={handleSearch}
-              placeholder="Search for a specific place (e.g., Eiffel Tower Paris)"
-            />
-            <SearchTextField
-              value={promptInput}
-              onChange={(e) => setPromptInput(e.target.value)}
-              onEnterPress={handlePrompt}
-              placeholder="Ask about places, e.g., &quot;Best coffee shops in Vienna&quot;"
-            />
-            <SearchTextField
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              onEnterPress={extractAndSearchPOIs}
-              placeholder="Paste text with locations..."
-              multiline
-              rows={3}
-            />
           </Box>
 
-          {/* Top Right: API Key and Saved Lists */}
+          {/* Map */}
           <Box sx={{ 
-            width: isMobile ? '100%' : '400px',
-            p: isMobile ? 0 : 2,
-            pl: 0,
-            pb: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            ...(isMobile ? {} : { maxHeight: '260px', overflowY: 'auto' })
+            position: 'relative',
+            flex: isMobile ? 'none' : 1,
+            height: isMobile ? '400px' : '100%',
+            minHeight: isMobile ? '400px' : 0
           }}>
+            <Map 
+              markers={markers} 
+              onMapLoad={handleMapLoad}
+              onRemoveAll={() => setMarkers([])}
+              onSaveList={() => setSaveDialogOpen(true)}
+              onRemoveMarker={handleDelete}
+              setMarkers={setMarkers}
+              isLoadingList={isLoadingList}
+              setIsLoadingList={setIsLoadingList}
+            />
+          </Box>
+        </Box>
+
+        {/* Right Column */}
+        <Box sx={{ 
+          width: isMobile ? '100%' : '50%',
+          display: 'flex',
+          flexDirection: 'column',
+          height: isMobile ? 'auto' : '100vh',
+          overflow: 'hidden',
+          padding: '0 0 0 8px',
+        }}>
+          {/* API Key Section */}
+          <Box sx={{ p: 1 }}>
             <Accordion 
               expanded={apiKeyExpanded} 
               onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
@@ -359,11 +355,11 @@ export default function Home() {
                   display: 'none',
                 },
                 '& .MuiAccordionSummary-root': {
-                  minHeight: '40px',
-                  padding: '0 16px',
+                  minHeight: '32px',
+                  padding: '0',
                 },
                 '& .MuiAccordionSummary-content': {
-                  margin: '8px 0',
+                  margin: '0',
                 },
               }}
             >
@@ -413,11 +409,19 @@ export default function Home() {
                 </Box>
               </AccordionDetails>
             </Accordion>
+          </Box>
 
-            <Box sx={{ 
-              mt: 0,
-              ...(isMobile ? {} : { 
-                maxHeight: '260px', 
+          {/* Saved Lists Section */}
+          <Box sx={{ px: 1 }}>
+            <Typography variant="body2" sx={{ mb: 0.5 }}>
+              Saved Lists ({savedLists.length})
+            </Typography>
+            <Box sx={{
+              backgroundColor: 'white',
+              borderRadius: 1,
+            }}>
+              <List dense sx={{ 
+                maxHeight: isMobile ? 'none' : '150px', 
                 overflowY: 'auto',
                 '&::-webkit-scrollbar': {
                   width: '6px',
@@ -432,106 +436,78 @@ export default function Home() {
                     background: '#999',
                   },
                 },
-                // Firefox
                 scrollbarWidth: 'thin',
                 scrollbarColor: '#bbb transparent',
-              })
-            }}>
-              <Accordion
-                sx={{
-                  backgroundColor: 'transparent',
-                  boxShadow: 'none',
-                  '&:before': {
-                    display: 'none',
-                  },
-                  '& .MuiAccordionSummary-root': {
-                    minHeight: '40px',
-                    padding: '0 16px',
-                  },
-                  '& .MuiAccordionSummary-content': {
-                    margin: '8px 0',
-                  },
-                }}
-              >
-                <AccordionSummary 
-                  expandIcon={<ExpandMoreIcon sx={{ fontSize: '1.1rem' }} />}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '8px 8px 0 0',
-                    '&.Mui-expanded': {
-                      borderRadius: '8px 8px 0 0'
-                    },
-                    '&.Mui-disabled': {
-                      borderRadius: '8px'
-                    }
-                  }}
-                >
-                  <Typography variant="body2">Saved Lists ({savedLists.length})</Typography>
-                </AccordionSummary>
-                <AccordionDetails
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '0 0 8px 8px',
-                    p: 0,
-                  }}
-                >
-                  <List dense>
-                    {savedLists.map((list, index) => (
-                      <ListItem
-                        key={index}
-                        dense
-                        secondaryAction={
+              }}>
+                {savedLists.map((list, index) => (
+                  <ListItem
+                    key={index}
+                    dense
+                    sx={{ py: 0.5, px: 0 }}
+                    secondaryAction={
+                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <Tooltip title="Load List" arrow>
+                          <IconButton edge="end" size="small" onClick={() => handleLoadList(list)}>
+                            <UploadFileIcon sx={{ fontSize: '1.1rem' }} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete List" arrow>
                           <IconButton edge="end" size="small" onClick={() => handleDeleteList(index)}>
                             <DeleteIcon sx={{ fontSize: '1.1rem' }} />
                           </IconButton>
+                        </Tooltip>
+                      </Box>
+                    }
+                  >
+                    <ListItemText
+                      primary={`${list.name} • ${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
+                      sx={{
+                        '& .MuiListItemText-primary': {
+                          fontSize: '0.875rem'
                         }
-                      >
-                        <ListItemText
-                          primary={list.name}
-                          secondary={`${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
-                          sx={{ cursor: 'pointer' }}
-                          onClick={() => handleLoadList(list)}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </AccordionDetails>
-              </Accordion>
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
             </Box>
           </Box>
-        </Box>
 
-        {/* Bottom Row */}
-        <Box sx={{ 
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          flex: 1
-        }}>
-          {/* Bottom Left: Map */}
+          {/* Search Inputs Section */}
           <Box sx={{ 
-            position: 'relative',
-            height: isMobile ? '400px' : '100%',
-            flex: isMobile ? undefined : 1
+            p: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1
           }}>
-            <Map 
-              markers={markers} 
-              onMapLoad={handleMapLoad}
-              onRemoveAll={() => setMarkers([])}
-              onSaveList={() => setSaveDialogOpen(true)}
-              onRemoveMarker={handleDelete}
-              setMarkers={setMarkers}
-              isLoadingList={isLoadingList}
-              setIsLoadingList={setIsLoadingList}
+            <SearchTextField
+              value={placeInput}
+              onChange={(e) => setPlaceInput(e.target.value)}
+              onEnterPress={handleSearch}
+              placeholder="Search for a specific place (e.g., Eiffel Tower Paris)"
+            />
+            <SearchTextField
+              value={promptInput}
+              onChange={(e) => setPromptInput(e.target.value)}
+              onEnterPress={handlePrompt}
+              placeholder="Ask about places, e.g., &quot;Best coffee shops in Vienna&quot;"
+            />
+            <SearchTextField
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+              onEnterPress={extractAndSearchPOIs}
+              placeholder="Paste text with locations..."
+              multiline
+              rows={2}
             />
           </Box>
 
-          {/* Bottom Right: Point Chips */}
+          {/* Selected Points Section */}
           <Box sx={{
-            width: isMobile ? '100%' : '400px',
-            p: 2,
+            p: 1,
             bgcolor: 'background.paper',
-            borderTop: isMobile ? 1 : 0,
-            borderColor: 'divider'
+            flex: 1,
+            overflowY: 'auto'
           }}>
             <Typography variant="body2" sx={{ mb: 1 }}>
               Selected Points ({markers.length})

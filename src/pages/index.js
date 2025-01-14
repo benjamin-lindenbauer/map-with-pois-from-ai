@@ -57,13 +57,27 @@ export default function Home() {
     // Set up Chrome extension message listener
     if (typeof chrome !== 'undefined' && chrome.runtime?.onMessage) {
       chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.action === 'receivePlaces') {
-          handleReceivedPlaces(request.data);
-          sendResponse({ status: 'success', message: 'Places received' });
-        } else {
-          sendResponse({ status: 'error', message: 'Unknown action' });
+        if (sender.id !== 'ibiadgbpodfljaekgnlmabphcnhfaheh') {
+          sendResponse({ status: 'error', message: 'Unauthorized sender' });
+          return true;
         }
-        return true; // Required to use sendResponse asynchronously
+
+        if (request.type === 'PLACES_DATA') {
+          // Handle the async operation
+          handleReceivedPlaces(request.places)
+            .then(() => {
+              sendResponse({ status: 'success', message: 'Places received and processed' });
+            })
+            .catch(error => {
+              console.error('Error processing places:', error);
+              sendResponse({ status: 'error', message: 'Error processing places' });
+            });
+          
+          return true; // Keep the message channel open for async response
+        } else {
+          sendResponse({ status: 'error', message: 'Unknown message type' });
+          return true;
+        }
       });
     }
   }, []);

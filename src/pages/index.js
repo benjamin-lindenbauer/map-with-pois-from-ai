@@ -56,10 +56,8 @@ export default function Home() {
 
     // Set up window message event listener
     const handleMessage = (event) => {
-      const expectedOrigin = `chrome-extension://ibiadgbpodfljaekgnlmabphcnhfaheh/`;
-    
-      if (!event.origin.startsWith(expectedOrigin)) {
-        console.error('Invalid origin:', event.origin);
+      if (!event.data.source === 'youtube-pois-extractor-extension') {
+        console.error('Invalid source:', event.data.source);
         return;
       }
 
@@ -67,11 +65,11 @@ export default function Home() {
         handleReceivedPlaces(event.data.places)
           .then(() => {
             // Optionally send response back if needed
-            event.source.postMessage({ status: 'success', message: 'Places received and processed' }, event.origin);
+            event.source.postMessage({ status: 'success', message: 'Places received and processed' });
           })
           .catch(error => {
             console.error('Error processing places:', error);
-            event.source.postMessage({ status: 'error', message: 'Error processing places' }, event.origin);
+            event.source.postMessage({ status: 'error', message: 'Error processing places' });
           });
       }
     };

@@ -54,32 +54,33 @@ export default function Home() {
     const lists = JSON.parse(localStorage.getItem('savedPointLists') || '[]');
     setSavedLists(lists);
 
-    // Set up Chrome extension message listener
-    if (typeof chrome !== 'undefined' && chrome.runtime?.onMessage) {
-      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (sender.id !== 'ibiadgbpodfljaekgnlmabphcnhfaheh') {
-          sendResponse({ status: 'error', message: 'Unauthorized sender' });
-          return true;
-        }
+    // Set up window message event listener
+    const handleMessage = (event) => {
+      // Important: Check the origin of the message
+      // Replace this with your extension's ID
+      if (event.origin !== 'chrome-extension://ibiadgbpodfljaekgnlmabphcnhfaheh') {
+        return;
+      }
 
-        if (request.type === 'PLACES_DATA') {
-          // Handle the async operation
-          handleReceivedPlaces(request.places)
-            .then(() => {
-              sendResponse({ status: 'success', message: 'Places received and processed' });
-            })
-            .catch(error => {
-              console.error('Error processing places:', error);
-              sendResponse({ status: 'error', message: 'Error processing places' });
-            });
-          
-          return true; // Keep the message channel open for async response
-        } else {
-          sendResponse({ status: 'error', message: 'Unknown message type' });
-          return true;
-        }
-      });
-    }
+      if (event.data && event.data.type === 'PLACES_DATA') {
+        handleReceivedPlaces(event.data.places)
+          .then(() => {
+            // Optionally send response back if needed
+            event.source.postMessage({ status: 'success', message: 'Places received and processed' }, event.origin);
+          })
+          .catch(error => {
+            console.error('Error processing places:', error);
+            event.source.postMessage({ status: 'error', message: 'Error processing places' }, event.origin);
+          });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   const handleReceivedPlaces = async (places) => {

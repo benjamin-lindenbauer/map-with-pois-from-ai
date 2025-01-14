@@ -53,7 +53,28 @@ export default function Home() {
     // Load saved lists from local storage
     const lists = JSON.parse(localStorage.getItem('savedPointLists') || '[]');
     setSavedLists(lists);
+
+    // Set up Chrome extension message listener
+    if (typeof chrome !== 'undefined' && chrome.runtime?.onMessage) {
+      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === 'receivePlaces') {
+          handleReceivedPlaces(request.data);
+          sendResponse({ status: 'success', message: 'Places received' });
+        } else {
+          sendResponse({ status: 'error', message: 'Unknown action' });
+        }
+        return true; // Required to use sendResponse asynchronously
+      });
+    }
   }, []);
+
+  const handleReceivedPlaces = async (places) => {
+    if (!places || !Array.isArray(places)) return;
+    
+    for (const location of places) {
+      await handleSearch(location);
+    }
+  };
 
   const handleApiKeyChange = (key) => {
     setApiKey(key);

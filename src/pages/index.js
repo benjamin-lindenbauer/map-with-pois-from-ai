@@ -56,10 +56,10 @@ export default function Home() {
 
     // Set up window message event listener
     const handleMessage = (event) => {
-      console.log('Received message:', event.data);
       const expectedOrigin = `chrome-extension://ibiadgbpodfljaekgnlmabphcnhfaheh/`;
     
       if (!event.origin.startsWith(expectedOrigin)) {
+        console.error('Invalid origin:', event.origin);
         return;
       }
 

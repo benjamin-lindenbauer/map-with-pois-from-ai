@@ -56,9 +56,9 @@ export default function Home() {
 
     // Set up window message event listener
     const handleMessage = (event) => {
-      // Important: Check the origin of the message
-      // Replace this with your extension's ID
-      if (event.origin !== 'chrome-extension://ibiadgbpodfljaekgnlmabphcnhfaheh') {
+      const expectedOrigin = `chrome-extension://ibiadgbpodfljaekgnlmabphcnhfaheh/`;
+    
+      if (!event.origin.startsWith(expectedOrigin)) {
         return;
       }
 

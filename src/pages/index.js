@@ -401,14 +401,14 @@ export default function Home() {
                   display: 'none',
                 },
                 '& .MuiAccordionSummary-root': {
-                  minHeight: '32px',
+                  minHeight: '0',
                   padding: '0',
                 },
                 '& .MuiAccordionSummary-content': {
                   margin: '0',
                 },
                 '& .MuiAccordionSummary-expanded': {
-                  minHeight: '32px',
+                  minHeight: '0',
                   padding: '0',
                 },
               }}
@@ -433,6 +433,14 @@ export default function Home() {
                   p: '0px',
                 }}
               >
+                <Box sx={{ 
+                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                  fontSize: '0.75rem', 
+                  color: 'info.main', 
+                  my: 1 
+                }}>
+                  <a href="https://platform.openai.com/api-keys" target="_blank">Create OpenAI API Key</a>
+                </Box>
                 <SearchTextField
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}

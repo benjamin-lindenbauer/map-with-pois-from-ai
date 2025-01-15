@@ -41,7 +41,7 @@ export default async function handler(req, res) {
           Differentiate between singular and plural requests, eg. "Best restaurants in Vienna" which returns multiple places, and "Best restaurantin Vienna" which returns one place.
           Do not include any other text in your response.
           Do not include numbering or bullet points.
-          Each line must follow the exact format: Name, City, Country`
+          Each line must follow the exact format: Name, City (if applicable), Country`
         },
         {
           role: "user",

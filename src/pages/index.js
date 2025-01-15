@@ -54,6 +54,7 @@ export default function Home() {
     const lists = JSON.parse(localStorage.getItem('savedPointLists') || '[]');
     setSavedLists(lists);
 
+    /*
     // Set up window message event listener
     const handleMessage = (event) => {
       if (!event.data.source === 'youtube-pois-extractor-extension') {
@@ -80,6 +81,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
+    */
   }, []);
 
   const handleReceivedPlaces = async (places) => {

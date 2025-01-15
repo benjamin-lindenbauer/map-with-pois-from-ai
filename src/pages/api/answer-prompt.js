@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -24,9 +24,6 @@ export default async function handler(req, res) {
           Examples:
           Input: "Highest building in Europe?"
           Output: "Lakhta Center, Saint Petersburg, Russia"
-
-          Input: "Where is the Eiffel Tower?"
-          Output: "Eiffel Tower, Paris, France"
 
           Input: "Where was Mozart born?"
           Output: "Salzburg, Austria"
@@ -41,6 +38,7 @@ export default async function handler(req, res) {
           Input: "Highest mountain in Germany"
           Output: "Zugspitze, Germany"
           
+          Differentiate between singular and plural requests, eg. "Best restaurants in Vienna" which returns multiple places, and "Best restaurantin Vienna" which returns one place.
           Do not include any other text in your response.
           Do not include numbering or bullet points.
           Each line must follow the exact format: Name, City, Country`

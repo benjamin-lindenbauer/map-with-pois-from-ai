@@ -543,6 +543,7 @@ export default function Home() {
               onChange={(e) => setPromptInput(e.target.value)}
               onEnterPress={handlePrompt}
               placeholder="Ask about places, e.g., &quot;Best coffee shops in Vienna&quot;"
+              disabled={!apiKey}
             />
             <SearchTextField
               value={textInput}
@@ -551,6 +552,7 @@ export default function Home() {
               placeholder="Paste text with locations..."
               multiline
               rows={2}
+              disabled={!apiKey}
             />
           </Box>
 

@@ -11,6 +11,7 @@ const SearchTextField = ({
   placeholder, 
   multiline = false, 
   rows = 1,
+  disabled = false,
   requireCtrl = false,
   type,
   submitIcon = 'search'
@@ -59,6 +60,7 @@ const SearchTextField = ({
         onKeyDown={handleKeyDown}
         multiline={multiline}
         rows={rows}
+        disabled={disabled}
         type={inputType}
         InputProps={{
           endAdornment: value ? (

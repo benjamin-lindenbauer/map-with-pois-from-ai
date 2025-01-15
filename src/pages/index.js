@@ -5,6 +5,8 @@ import { Box, Chip, Stack, useMediaQuery, useTheme, Typography, Accordion, Accor
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CheckIcon from '@mui/icons-material/Check';
+import WarningIcon from '@mui/icons-material/Warning';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
 
@@ -405,6 +407,10 @@ export default function Home() {
                 '& .MuiAccordionSummary-content': {
                   margin: '0',
                 },
+                '& .MuiAccordionSummary-expanded': {
+                  minHeight: '32px',
+                  padding: '0',
+                },
               }}
             >
               <AccordionSummary
@@ -417,6 +423,8 @@ export default function Home() {
                 <Typography variant="body2">
                   OpenAI API Key
                 </Typography>
+                {apiKey ? <CheckIcon fontSize="small" sx={{ marginLeft: 1 }} /> :
+                  <WarningIcon fontSize="small" sx={{ marginLeft: 1 }} />}
               </AccordionSummary>
               <AccordionDetails
                 sx={{
@@ -549,7 +557,7 @@ export default function Home() {
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               onEnterPress={extractAndSearchPOIs}
-              placeholder="Paste text with locations..."
+              placeholder="Paste text with locations to extract the locations..."
               multiline
               rows={2}
               disabled={!apiKey}

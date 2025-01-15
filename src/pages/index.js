@@ -379,7 +379,6 @@ export default function Home() {
           display: 'flex',
           flexDirection: 'column',
           height: isMobile ? 'auto' : '100vh',
-          overflow: 'hidden',
           padding: '8px',
           gap: 2
         }}>

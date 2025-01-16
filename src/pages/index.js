@@ -472,69 +472,71 @@ export default function Home() {
             <Typography variant="body2" sx={{ mb: 0.5 }}>
               Saved Lists ({savedLists.length})
             </Typography>
-            <Box sx={{ 
-              p: 1,
-              border: '1px solid #e0e0e0',
-              borderRadius: 1,
-              bgcolor: 'white'
-            }}>
-              <Box sx={{
-                backgroundColor: 'white',
+            {savedLists.length > 0 && (
+              <Box sx={{ 
+                p: 1,
+                border: '1px solid #e0e0e0',
                 borderRadius: 1,
+                bgcolor: 'white'
               }}>
-                <List dense sx={{ 
-                  p: 0,
-                  maxHeight: isMobile ? 'none' : '144px', 
-                  overflowY: 'auto',
-                  '&::-webkit-scrollbar': {
-                    width: '6px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    background: 'transparent',
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                    background: '#bbb',
-                    borderRadius: '3px',
-                    '&:hover': {
-                      background: '#999',
-                    },
-                  },
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#bbb transparent',
+                <Box sx={{
+                  backgroundColor: 'white',
+                  borderRadius: 1,
                 }}>
-                  {savedLists.map((list, index) => (
-                    <ListItem
-                      key={index}
-                      dense
-                      sx={{ py: 0.5, px: 0 }}
-                      secondaryAction={
-                        <Box sx={{ display: 'flex', gap: 0.5 }}>
-                          <Tooltip title="Load List" arrow>
-                            <IconButton edge="end" size="small" onClick={() => handleLoadList(list)}>
-                              <UploadFileIcon sx={{ fontSize: '1.1rem' }} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete List" arrow>
-                            <IconButton edge="end" size="small" onClick={() => handleDeleteList(index)}>
-                              <DeleteIcon sx={{ fontSize: '1.1rem' }} />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      }
-                    >
-                      <ListItemText
-                        primary={`${list.name} • ${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
-                        sx={{
-                          '& .MuiListItemText-primary': {
-                            fontSize: '0.875rem'
-                          }
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
+                  <List dense sx={{ 
+                    p: 0,
+                    maxHeight: isMobile ? 'none' : '144px', 
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '6px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: '#bbb',
+                      borderRadius: '3px',
+                      '&:hover': {
+                        background: '#999',
+                      },
+                    },
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: '#bbb transparent',
+                  }}>
+                    {savedLists.map((list, index) => (
+                      <ListItem
+                        key={index}
+                        dense
+                        sx={{ py: 0.5, px: 0 }}
+                        secondaryAction={
+                          <Box sx={{ display: 'flex', gap: 0.5 }}>
+                            <Tooltip title="Load List" arrow>
+                              <IconButton edge="end" size="small" onClick={() => handleLoadList(list)}>
+                                <UploadFileIcon sx={{ fontSize: '1.1rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Delete List" arrow>
+                              <IconButton edge="end" size="small" onClick={() => handleDeleteList(index)}>
+                                <DeleteIcon sx={{ fontSize: '1.1rem' }} />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        }
+                      >
+                        <ListItemText
+                          primary={`${list.name} • ${list.markers.length} points • ${new Date(list.date).toLocaleDateString()}`}
+                          sx={{
+                            '& .MuiListItemText-primary': {
+                              fontSize: '0.875rem'
+                            }
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
               </Box>
-            </Box>
+            )}
           </Box>
 
           {/* Search Inputs Section */}

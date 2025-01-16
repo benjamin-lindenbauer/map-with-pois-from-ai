@@ -435,7 +435,7 @@ export default function Home() {
                   margin: '0',
                 },
                 '& .MuiAccordionSummary-expanded': {
-                  minHeight: '0',
+                  minHeight: '0 !important',
                   padding: '0',
                 },
               }}

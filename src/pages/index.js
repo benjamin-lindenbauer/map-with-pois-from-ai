@@ -323,33 +323,63 @@ export default function Home() {
           height: isMobile ? 'auto' : '100%'
         }}>
           {/* Info Box */}
-          <Box>
-            <Box 
-              sx={{ 
+          <Accordion
+            sx={{
+              margin: '0 !important',
+              '&.MuiAccordion-root': {
+                margin: '0 !important'
+              },
+              '&.Mui-expanded': {
+                margin: '0 !important'
+              },
+              '&:before': {
+                display: 'none'
+              }
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{
                 backgroundColor: '#329AB1',
                 color: 'white',
-                p: 1.5,
-                fontSize: '0.875rem',
-                '& b': { fontWeight: 600 }
+                '& .MuiAccordionSummary-expandIconWrapper': {
+                  color: 'white'
+                }
               }}
             >
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                Add places to your map using any of these methods:
+              <Typography variant="body1">
+                Points on Maps: Create Your Own Maps with Points of Interest
               </Typography>
-              <Typography variant="body2">
-                <b>🎯 Click Map:</b> Simply click anywhere on the map to add a marker at that location.
-              </Typography>
-              <Typography variant="body2">
-                <b>💡 Smart Search:</b> Use natural language like &quot;hip cafes in Berlin&quot; to discover places.
-              </Typography>
-              <Typography variant="body2">
-                <b>📝 Text Extract:</b> Paste any text with locations to automatically mark them all.
-              </Typography>
-              <Typography variant="body2">
-                <b>🔍 Direct Search:</b> Search specific places like &quot;Eiffel Tower Paris&quot; for precise results.
-              </Typography>
-            </Box>
-          </Box>
+            </AccordionSummary>
+            <AccordionDetails sx={{ p: 0 }}>
+              <Box 
+                sx={{ 
+                  backgroundColor: '#329AB1',
+                  color: 'white',
+                  p: 1.5,
+                  pt: 0,
+                  fontSize: '0.875rem',
+                  '& b': { fontWeight: 600 }
+                }}
+              >
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  Add places to your map using any of these methods:
+                </Typography>
+                <Typography variant="body2">
+                  <b>🎯 Click Map:</b> Simply click anywhere on the map to add a marker at that location.
+                </Typography>
+                <Typography variant="body2">
+                  <b>💡 Smart Search:</b> Use natural language like &quot;hip cafes in Berlin&quot; to discover places.
+                </Typography>
+                <Typography variant="body2">
+                  <b>📝 Text Extract:</b> Paste any text with locations to automatically mark them all.
+                </Typography>
+                <Typography variant="body2">
+                  <b>🔍 Direct Search:</b> Search specific places like &quot;Eiffel Tower Paris&quot; for precise results.
+                </Typography>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
 
           {/* Map */}
           <Box sx={{ 
@@ -391,7 +421,7 @@ export default function Home() {
               expanded={apiKeyExpanded} 
               onChange={() => setApiKeyExpanded(!apiKeyExpanded)}
               sx={{
-                margin: '0',
+                margin: '0 !important',
                 backgroundColor: 'transparent',
                 boxShadow: 'none',
                 '&:before': {

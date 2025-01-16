@@ -5,8 +5,6 @@ import { Box, Chip, Stack, useMediaQuery, useTheme, Typography, Accordion, Accor
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import CheckIcon from '@mui/icons-material/Check';
-import WarningIcon from '@mui/icons-material/Warning';
 import Map from '@/components/Map';
 import SearchTextField from '@/components/SearchTextField';
 
@@ -422,8 +420,7 @@ export default function Home() {
                 <Typography variant="body2">
                   OpenAI API Key
                 </Typography>
-                {apiKey ? <CheckIcon fontSize="small" sx={{ marginLeft: 1 }} /> :
-                  <WarningIcon fontSize="small" sx={{ marginLeft: 1 }} />}
+                <Box sx={{ color: apiKey ? 'green' : 'red', fontSize: '0.75rem', ml: 0.5, mt: 0.5 }}>●</Box>
               </AccordionSummary>
               <AccordionDetails
                 sx={{

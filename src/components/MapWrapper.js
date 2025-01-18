@@ -1,16 +1,17 @@
 import { useJsApiLoader } from '@react-google-maps/api';
 import { useState } from 'react';
+import { getGoogleMapsApiKey } from '../utils/googleMapsConfig';
 
 const libraries = ['places'];
 
-const mapConfig = {
-  id: 'google-map-script',
-  googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-  libraries
-};
+const MapWrapper = ({ children }) => {
+  const config = {
+    id: 'google-map-script',
+    googleMapsApiKey: getGoogleMapsApiKey(),
+    libraries
+  };
 
-export default function MapWrapper({ children }) {
-  const { isLoaded, loadError } = useJsApiLoader(mapConfig);
+  const { isLoaded, loadError } = useJsApiLoader(config);
   const [placesService, setPlacesService] = useState(null);
 
   if (loadError) {
@@ -19,3 +20,5 @@ export default function MapWrapper({ children }) {
 
   return children({ isLoaded, placesService, setPlacesService });
 }
+
+export default MapWrapper;

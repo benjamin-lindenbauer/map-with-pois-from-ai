@@ -1,11 +1,12 @@
 import { LoadScript } from '@react-google-maps/api';
+import { getGoogleMapsApiKey } from './googleMapsConfig';
 
 const libraries = ['places', 'marker'];
 
 export function GoogleMapsProvider({ children }) {
   return (
     <LoadScript
-      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+      googleMapsApiKey={getGoogleMapsApiKey()}
       libraries={libraries}
     >
       {children}

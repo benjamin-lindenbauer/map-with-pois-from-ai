@@ -13,6 +13,7 @@ export default function Home() {
   const [promptInput, setPromptInput] = useState('');
   const [placeInput, setPlaceInput] = useState('');
   const [apiKey, setApiKey] = useState('');
+  const [googleMapsApiKey, setGoogleMapsApiKey] = useState('');
   const [markers, setMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
   const [mapInstance, setMapInstance] = useState(null);
@@ -27,11 +28,15 @@ export default function Home() {
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem('openai_api_key');
+    const savedGoogleMapsApiKey = localStorage.getItem('google_maps_api_key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
       setApiKeyExpanded(false);
     } else {
       setApiKeyExpanded(true);
+    }
+    if (savedGoogleMapsApiKey) {
+      setGoogleMapsApiKey(savedGoogleMapsApiKey);
     }
   }, []);
 
@@ -39,6 +44,13 @@ export default function Home() {
     const savedApiKey = localStorage.getItem('openai_api_key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedGoogleMapsApiKey = localStorage.getItem('google_maps_api_key');
+    if (savedGoogleMapsApiKey) {
+      setGoogleMapsApiKey(savedGoogleMapsApiKey);
     }
   }, []);
 
@@ -98,7 +110,14 @@ export default function Home() {
     setApiKeyExpanded(false);
   };
 
+  const handleGoogleMapsApiKeyChange = (key) => {
+    setGoogleMapsApiKey(key);
+    localStorage.setItem('google_maps_api_key', key);
+    window.location.reload(); // Reload to apply the new API key
+  };
+
   const handleSearch = async (query) => {
+    console.log(query, googleMapsApiKey);
     if (!query || !placesService) return;
 
     try {
@@ -428,7 +447,7 @@ export default function Home() {
                   display: 'none',
                 },
                 '& .MuiAccordionSummary-root': {
-                  minHeight: '0',
+                  minHeight: '0 !important',
                   padding: '0',
                 },
                 '& .MuiAccordionSummary-content': {
@@ -448,9 +467,9 @@ export default function Home() {
                 }}
               >
                 <Typography variant="body2">
-                  OpenAI API Key
+                  API Keys
                 </Typography>
-                <Box sx={{ color: apiKey ? 'green' : 'red', fontSize: '0.75rem', ml: 0.5, mt: 0.5 }}>●</Box>
+                <Box sx={{ color: apiKey && googleMapsApiKey ? 'green' : 'red', fontSize: '0.75rem', ml: 0.5, mt: 0.5 }}>●</Box>
               </AccordionSummary>
               <AccordionDetails
                 sx={{
@@ -459,11 +478,13 @@ export default function Home() {
                   p: '0px',
                 }}
               >
+                {/* OpenAI API Key */}
+                <Typography variant="body2" sx={{ mt: 1, mb: 0.5 }}>OpenAI API Key:</Typography>
                 <Box sx={{ 
                   fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
                   fontSize: '0.75rem', 
                   color: 'info.main', 
-                  my: 1 
+                  mb: 1 
                 }}>
                   <a href="https://platform.openai.com/api-keys" target="_blank">Create OpenAI API Key</a>
                 </Box>
@@ -485,13 +506,43 @@ export default function Home() {
                     Please enter your OpenAI API key to use the AI features
                   </Box>
                 )}
+
+                {/* Google Maps API Key */}
+                <Typography variant="body2" sx={{ mt: 2, mb: 0.5 }}>Google Maps API Key:</Typography>
                 <Box sx={{ 
                   fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
                   fontSize: '0.75rem', 
                   color: 'info.main', 
-                  mt: 1 
+                  mb: 1 
                 }}>
-                  Note: Your API key will be stored in your browser's local storage.
+                  <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Create Google Maps API Key</a>
+                </Box>
+                <SearchTextField
+                  value={googleMapsApiKey}
+                  onChange={(e) => setGoogleMapsApiKey(e.target.value)}
+                  onEnterPress={handleGoogleMapsApiKeyChange}
+                  placeholder="Enter Google Maps API Key"
+                  type="password"
+                  submitIcon="save"
+                />
+                {!googleMapsApiKey && (
+                  <Box sx={{ 
+                    fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                    fontSize: '0.75rem', 
+                    color: 'warning.main', 
+                    mt: 1 
+                  }}>
+                    Please enter your Google Maps API key for map functionality
+                  </Box>
+                )}
+
+                <Box sx={{ 
+                  fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+                  fontSize: '0.75rem', 
+                  color: 'info.main', 
+                  mt: 2 
+                }}>
+                  Note: Your API keys will be stored in your browser's local storage.
                 </Box>
               </AccordionDetails>
             </Accordion>
@@ -580,7 +631,7 @@ export default function Home() {
               value={placeInput}
               onChange={(e) => setPlaceInput(e.target.value)}
               onEnterPress={handleSearch}
-              placeholder="Search for a specific place (e.g., Eiffel Tower Paris)"
+              placeholder="Add a specific place (e.g., Eiffel Tower Paris)"
             />
             <SearchTextField
               value={promptInput}

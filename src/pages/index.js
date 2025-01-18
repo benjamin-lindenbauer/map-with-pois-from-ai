@@ -12,7 +12,7 @@ export default function Home() {
   const [textInput, setTextInput] = useState('');
   const [promptInput, setPromptInput] = useState('');
   const [placeInput, setPlaceInput] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [openAiApiKey, setOpenAiApiKey] = useState('');
   const [googleMapsApiKey, setGoogleMapsApiKey] = useState('');
   const [markers, setMarkers] = useState([]);
   const [placesService, setPlacesService] = useState(null);
@@ -28,26 +28,9 @@ export default function Home() {
 
   useEffect(() => {
     const savedApiKey = localStorage.getItem('openai_api_key');
-    const savedGoogleMapsApiKey = localStorage.getItem('google_maps_api_key');
     if (savedApiKey) {
-      setApiKey(savedApiKey);
-      setApiKeyExpanded(false);
-    } else {
-      setApiKeyExpanded(true);
+      setOpenAiApiKey(savedApiKey);
     }
-    if (savedGoogleMapsApiKey) {
-      setGoogleMapsApiKey(savedGoogleMapsApiKey);
-    }
-  }, []);
-
-  useEffect(() => {
-    const savedApiKey = localStorage.getItem('openai_api_key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-    }
-  }, []);
-
-  useEffect(() => {
     const savedGoogleMapsApiKey = localStorage.getItem('google_maps_api_key');
     if (savedGoogleMapsApiKey) {
       setGoogleMapsApiKey(savedGoogleMapsApiKey);
@@ -104,8 +87,8 @@ export default function Home() {
     }
   };
 
-  const handleApiKeyChange = (key) => {
-    setApiKey(key);
+  const handleOpenAiApiKeyChange = (key) => {
+    setOpenAiApiKey(key);
     localStorage.setItem('openai_api_key', key);
     setApiKeyExpanded(false);
   };
@@ -195,8 +178,8 @@ export default function Home() {
   };
 
   const handlePrompt = async (prompt) => {
-    if (!prompt || !placesService || !apiKey) {
-      if (!apiKey) {
+    if (!prompt || !placesService || !openAiApiKey) {
+      if (!openAiApiKey) {
         alert('Please enter your OpenAI API key first');
       }
       return;
@@ -209,7 +192,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt, apiKey }),
+        body: JSON.stringify({ prompt, apiKey: openAiApiKey }),
       });
 
       if (!response.ok) {
@@ -229,8 +212,8 @@ export default function Home() {
   };
 
   const extractAndSearchPOIs = async (text) => {
-    if (!text || !placesService || !apiKey) {
-      if (!apiKey) {
+    if (!text || !placesService || !openAiApiKey) {
+      if (!openAiApiKey) {
         alert('Please enter your OpenAI API key first');
       }
       return;
@@ -243,7 +226,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text, apiKey }),
+        body: JSON.stringify({ text, apiKey: openAiApiKey }),
       });
 
       if (!response.ok) {
@@ -469,7 +452,7 @@ export default function Home() {
                 <Typography variant="body2">
                   API Keys
                 </Typography>
-                <Box sx={{ color: apiKey && googleMapsApiKey ? 'green' : 'red', fontSize: '0.75rem', ml: 0.5, mt: 0.5 }}>●</Box>
+                <Box sx={{ color: openAiApiKey && googleMapsApiKey ? 'green' : 'red', fontSize: '0.75rem', ml: 0.5, mt: 0.5 }}>●</Box>
               </AccordionSummary>
               <AccordionDetails
                 sx={{
@@ -489,14 +472,14 @@ export default function Home() {
                   <a href="https://platform.openai.com/api-keys" target="_blank">Create OpenAI API Key</a>
                 </Box>
                 <SearchTextField
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  onEnterPress={handleApiKeyChange}
+                  value={openAiApiKey}
+                  onChange={(e) => setOpenAiApiKey(e.target.value)}
+                  onEnterPress={handleOpenAiApiKeyChange}
                   placeholder="Enter OpenAI API Key"
                   type="password"
                   submitIcon="save"
                 />
-                {!apiKey && (
+                {!openAiApiKey && (
                   <Box sx={{ 
                     fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
                     fontSize: '0.75rem', 
@@ -638,7 +621,7 @@ export default function Home() {
               onChange={(e) => setPromptInput(e.target.value)}
               onEnterPress={handlePrompt}
               placeholder="Ask about places, e.g., &quot;Best coffee shops in Vienna&quot;"
-              disabled={!apiKey}
+              disabled={!openAiApiKey}
             />
             <SearchTextField
               value={textInput}
@@ -647,7 +630,7 @@ export default function Home() {
               placeholder="Paste text with locations to extract the locations..."
               multiline
               rows={2}
-              disabled={!apiKey}
+              disabled={!openAiApiKey}
             />
           </Box>
 
@@ -737,7 +720,7 @@ export default function Home() {
             fullWidth
             value={listName}
             onChange={(e) => setListName(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter' && listName.trim()) {
                 e.preventDefault();
                 handleSaveList();
